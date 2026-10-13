@@ -93,7 +93,7 @@ function App(){
   try{
    let data,source='e-Gov APIから取得';
    try{data=await request(`${API}/law_data/${encodeURIComponent(id)}?law_full_text_format=xml&response_format=json`,controller.signal);}
-   catch(error){if(controller.signal.aborted)return;if(!DEFAULTS.includes(id))throw error;data=await request(`/data/${id}.json`,controller.signal);source=`保存データ・${data.snapshot_date}取得（API接続不可）`;}
+   catch(error){if(controller.signal.aborted)return;if(!DEFAULTS.includes(id))throw error;data=await request(`${import.meta.env.BASE_URL}data/${id}.json`,controller.signal);source=`保存データ・${data.snapshot_date}取得（API接続不可）`;}
    const law=await parseLaw(data,source);if(controller.signal.aborted)return;
    setLaws(p=>p.map((v,j)=>j===i?law:v));setSelected(p=>p.map((v,j)=>j===i?(law.articles[0]?.key??''):v));
   }catch(e){if(!controller.signal.aborted)setErrors(p=>p.map((v,j)=>j===i?e.message:v));}
@@ -153,7 +153,7 @@ function App(){
   const seq=++searchSeq.current;setBundleLoading(true);setSearchError('');
   try{
    let act=record||results.find(r=>r.law_info.law_id===id);
-   if(!act){const d=await request(`/data/${id}.json`);act={law_info:d.law_info,revision_info:d.revision_info};}
+   if(!act){const d=await request(`${import.meta.env.BASE_URL}data/${id}.json`);act={law_info:d.law_info,revision_info:d.revision_info};}
    const title=act.revision_info.law_title;
    const d=await request(`${API}/laws?law_title=${encodeURIComponent(title)}&limit=1000&response_format=json`);
    if(seq!==searchSeq.current)return;
