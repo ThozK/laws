@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.openai/deploy-metadata.json
+.openai/local-state.json
+
+.openai/
+.DS_Store
