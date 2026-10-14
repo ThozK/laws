@@ -17,4 +17,29 @@
 
 .columns{padding-top:12px}.reader{height:calc(100dvh - 265px)}@media(max-width:700px){.reader{height:65dvh}}
 
-.column-width-toggle{justify-content:space-between;padding:5px 14px;min-height:30px}.colored-label{font-size:12px;font-weight:600;letter-spacing:.04em}.column-width-toggle[aria-pressed=true]{min-height:30px}.column-header{padding-top:12px}.column-header h3{margin-top:0}.reader{height:calc(100dvh - 242px)}.reference.ref-act{text-decoration-color:#3b8178}.reference.ref-order{text-decoration-color:#687da5}.reference.ref-rule{text-decoration-color:#ac802f}.reference.ref-external{text-decoration-color:#976b9b}.reference{text-decoration-thickness:1.5px}.selection-targets{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6px;margin-bottom:18px}.selection-targets button{font-size:11px;padding:9px 5px}.selection-targets button[aria-pressed=true]{background:#17343b;color:white;border-color:#17343b}@media(max-width:700px){.column-width-toggle{display:flex}.reader{height:65dvh}.selection-targets button{font-size:10px}}
+.column-width-toggle{justify-content:space-between;padding:5px 14px;min-height:30px}.colored-label{font-size:12px;font-weight:600;letter-spacing:.04em}.column-width-toggle[aria-pressed=true]{min-height:30px}.column-header{padding-top:12px}.column-header h3{margin-top:0}.reader{height:calc(100dvh - 242px)}.reference.ref-act{text-decoration-color:#14b89c}.reference.ref-order{text-decoration-color:#4b9fff}.reference.ref-rule{text-decoration-color:#edaa19}.reference.ref-external{text-decoration-color:#ce70e8}.reference{text-decoration-thickness:1.5px}.selection-targets{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6px;margin-bottom:18px}.selection-targets button{font-size:11px;padding:9px 5px}.selection-targets button[aria-pressed=true]{background:#17343b;color:white;border-color:#17343b}@media(max-width:700px){.column-width-toggle{display:flex}.reader{height:65dvh}.selection-targets button{font-size:10px}}
+
+.column-size-icon{display:inline-flex;align-items:center;gap:3px;min-height:16px}.column-size-icon>span{display:block;border:1.5px solid currentColor;border-radius:1px}.note-heading{align-items:flex-start;gap:12px;letter-spacing:normal}.reference-note .note-heading h3{font-size:12px;font-weight:600;line-height:1.6;margin:0 0 10px;color:#5c512e}.note-heading button{flex-shrink:0}.definition-reference{text-decoration-style:dotted}
+
+.column-arrow-icon{display:block;flex-shrink:0;overflow:visible}
+
+.note-location{font-size:12px;font-weight:600;color:#826423;margin:0 0 8px}.note-excerpt+.note-excerpt{border-top:1px solid #e1d6ad;margin-top:14px;padding-top:14px}
+
+/* Reveal reference cues only inside the article being read. */
+.reader .reference{color:inherit;text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:transparent;background:transparent;transition:text-decoration-color .15s,background-color .15s}
+.reader .reference.ref-external{text-decoration-style:solid}
+.reader .reference.ref-cross{text-decoration:none;background:transparent;border-radius:2px}
+.reader .ref-act{--reference-mark:#14b89c55}
+.reader .ref-order{--reference-mark:#4b9fff55}
+.reader .ref-rule{--reference-mark:#edaa195c}
+.reader section[data-article]:hover .reference,
+.reader section[data-article]:focus-within .reference,
+.reader .reference:hover,
+.reader .reference:focus-visible{text-decoration-color:#438f98}
+.reader section[data-article]:hover .reference.ref-cross,
+.reader section[data-article]:focus-within .reference.ref-cross,
+.reader .reference.ref-cross:hover,
+.reader .reference.ref-cross:focus-visible{background:var(--reference-mark)}
+@media(hover:none){.reader .reference{text-decoration-color:#438f98}.reader .reference.ref-cross{background:var(--reference-mark)}}
+
+.reading-back{font-size:10px;padding:5px 7px;white-space:nowrap}.reading-back:disabled{opacity:.35;cursor:default}.jump-label{gap:7px}

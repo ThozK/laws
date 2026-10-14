@@ -36,3 +36,24 @@ test('政令リンクは参照している項ごとに候補を区別する',()=
  assert.deepEqual(delegationCandidates(maps[0],{article:article.articleKey,paragraph:'999',index:0},'政令'),[]);
  assert.deepEqual(delegationCandidates(maps[0],{article:article.articleKey,paragraph:'2',index:0},'省令'),[]);
 });
+
+import {definitionFor} from '../src/definitions.js';
+test('定義語と略称から同法令の定義文を取得する',()=>{
+ for(const [name,pattern] of [['個人情報',/生存する個人/],['基本方針',/以下「基本方針」という/],['利用目的',/以下「利用目的」という/]]){
+  const ref=laws[0].analysis.variableReferences.find(r=>r.text()===name);
+  assert.ok(ref,name);assert.match(definitionFor(laws[0],ref).content.text(),pattern);
+ }
+});
+test('定義参照は別法令の宣言を探さず、この法律は対象外にする',()=>{
+ const ref=laws[0].analysis.variableReferences.find(r=>r.text()==='基本方針');
+ assert.equal(definitionFor(laws[1],ref),null);
+ assert.equal(definitionFor(laws[0],{text:()=> 'この法律'}),null);
+});
+
+import {noteContext} from '../src/noteContext.js';
+test('付箋は定義文と号の所属する条・項を表示する',()=>{
+ const ref=laws[0].analysis.variableReferences.find(r=>r.text()==='利用目的');
+ assert.equal(noteContext(laws[0],definitionFor(laws[0],ref).content),'第十七条　第1項');
+ const found=findTarget(laws[0],{article:'2',paragraph:'1',item:'1'});
+ assert.equal(noteContext(laws[0],found.el),'第二条　第1項　第1号');
+});

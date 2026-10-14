@@ -11,6 +11,8 @@ import {isAvailableLaw} from './catalog.js';
 import LawCatalog from './LawCatalog.jsx';
 import {toggleColumnWidth,validWeights,captureReadingAnchor,restoreReadingAnchor} from './layout.js';
 import {referenceKind} from './referenceColors.js';
+import {definitionFor} from './definitions.js';
+import {noteContext} from './noteContext.js';
 import './style.css';
 
 const API='https://laws.e-gov.go.jp/api/2';
@@ -31,17 +33,25 @@ async function parseLaw(data,source){
  return {id:data.law_info.law_id,title:data.revision_info.law_title,num:data.law_info.law_num,revision:data.revision_info.law_revision_id,date:data.revision_info.amendment_enforcement_date,el,articles,analysis,source};
 }
 async function request(url,signal){const res=await fetch(url,{signal:signal||AbortSignal.timeout(20000)});if(!res.ok)throw Error(`法令APIから取得できませんでした（${res.status}）。`);return res.json();}
+function ReferenceButton({options,preview,onClick,...props}){
+ return <button {...props} onMouseEnter={e=>{const anchor=e.currentTarget;options.startPreview(()=>preview(anchor));}} onMouseLeave={options.endPreview} onFocus={e=>{const anchor=e.currentTarget;options.startPreview(()=>preview(anchor));}} onBlur={options.endPreview} onClick={onClick}/>;
+}
 function Wrap({htmlComponentID,childProps,ChildComponent}){
  const {el,htmlOptions}=childProps,options=htmlOptions.options||{};
+ if(htmlComponentID==='HTMLControlRun'&&el.text()==='この法律')return <>{el.text()}</>;
+ if(htmlComponentID==='HTMLControlRun'&&el.tag==='____VarRef'){
+  const definition=definitionFor(options.law,el);
+  if(definition)return <ReferenceButton options={options} preview={anchor=>options.onDefinition(definition,options.index,anchor,true)} className={`reference definition-reference ref-${['act','order','rule'][options.index]}`} title={`${el.text()}の定義を表示`} onClick={e=>options.onDefinition(definition,options.index,e.currentTarget)}>{el.text()}</ReferenceButton>;
+ }
  if(htmlComponentID==='HTMLControlRun'&&el.tag==='____Pointer'){
   if(el.text()==='この法律')return <>{el.text()}</>;
   const env=options.law?.analysis.pointerEnvByEL.get(el);
   const targets=env?.located?.type==='external'?externalTargets(env):env?.located?.type==='internal'?internalTargets(env):[];
-  if(targets.some(t=>t.target))return <>{targets.map((t,k)=>t.target?<button className={`reference ref-${referenceKind({...t.target,internal:env.located.type==='internal'},options.index,options.laws)}`} key={k} title="参照条文を表示" onClick={e=>options.onReference({...t.target,internal:env.located.type==='internal'},options.index,e.currentTarget)}>{t.text}</button>:<React.Fragment key={k}>{t.text}</React.Fragment>)}</>;
+  if(targets.some(t=>t.target))return <>{targets.map((t,k)=>t.target?<ReferenceButton options={options} preview={anchor=>options.onReference({...t.target,internal:env.located.type==='internal'},options.index,anchor,true)} className={`reference ${!t.target.internal&&env.located.type!=='internal'&&options.laws.some((l,i)=>i!==options.index&&l?.num===t.target.lawNum)?'ref-cross':''} ref-${referenceKind({...t.target,internal:env.located.type==='internal'},options.index,options.laws)}`} key={k} title="参照条文を表示" onClick={e=>options.onReference({...t.target,internal:env.located.type==='internal'},options.index,e.currentTarget)}>{t.text}</ReferenceButton>:<React.Fragment key={k}>{t.text}</React.Fragment>)}</>;
  }
  if(htmlComponentID==='HTMLControlRun'&&['____LawRef','____LawNum'].includes(el.tag)){
   const lawNum=el.attr.lawNum||el.text();
-  return <button className={`reference law-reference ref-${referenceKind({lawNum},options.index,options.laws)}`} title="参照法令を表示" onClick={e=>options.onReference({lawNum,title:el.attr.suggestedLawTitle},options.index,e.currentTarget)}>{el.text()}</button>;
+  return <ReferenceButton options={options} preview={anchor=>options.onReference({lawNum,title:el.attr.suggestedLawTitle},options.index,anchor,true)} className={`reference law-reference ${options.laws.some((l,i)=>i!==options.index&&l?.num===lawNum)?'ref-cross':''} ref-${referenceKind({lawNum},options.index,options.laws)}`} title="参照法令を表示" onClick={e=>options.onReference({lawNum,title:el.attr.suggestedLawTitle},options.index,e.currentTarget)}>{el.text()}</ReferenceButton>;
  }
  if(htmlComponentID==='HTMLSentenceChildrenRun'&&options.article!==undefined){
   const parts=childProps.els.map((part,k)=>{
@@ -49,7 +59,7 @@ function Wrap({htmlComponentID,childProps,ChildComponent}){
    const pieces=[];let offset=0;
    for(const match of part.matchAll(delegationWords)){
     pieces.push(part.slice(offset,match.index));const candidates=delegationCandidates(options.backlinks,{article:options.article,paragraph:options.paragraph,item:options.item,index:options.index},match[0]);
-    pieces.push(candidates.length?<button className={`reference delegation-reference ref-${['act','order','rule'][candidates[0]?.sourceIndex]||'external'}`} key={`${k}-${match.index}`} title="この条項を参照する下位法令を表示" onClick={e=>options.onDelegation(candidates,match[0],options.index,e.currentTarget)}>{match[0]}</button>:match[0]);offset=match.index+match[0].length;
+    pieces.push(candidates.length?<ReferenceButton options={options} preview={anchor=>options.previewDelegation(candidates,match[0],options.index,anchor)} className={`reference ref-cross delegation-reference ref-${['act','order','rule'][candidates[0]?.sourceIndex]||'external'}`} key={`${k}-${match.index}`} title="この条項を参照する下位法令を表示" onClick={e=>options.onDelegation(candidates,match[0],options.index,e.currentTarget)}>{match[0]}</ReferenceButton>:match[0]);offset=match.index+match[0].length;
    }
    pieces.push(part.slice(offset));return <React.Fragment key={k}>{pieces}</React.Fragment>;
   });return <>{parts}</>;
@@ -73,16 +83,19 @@ function App(){
  const [selected,setSelected]=useState(['','','']);
  const [dialog,setDialog]=useState(null),[query,setQuery]=useState(''),[results,setResults]=useState([]),[searching,setSearching]=useState(false),[searchError,setSearchError]=useState('');
  const [font,setFont]=useState(saved.font||17),[notice,setNotice]=useState(''),[mobile,setMobile]=useState(0);
+ const previewTimer=useRef(null),previewHide=useRef(null),hoverNote=useRef(false);
+ const noteAnchor=useRef(null);
  const panes=useRef([]),searchSeq=useRef(0),noteSeq=useRef(0),noteCache=useRef(new Map());
  const [note,setNote]=useState(null);
+ const [readingHistory,setReadingHistory]=useState([[],[],[]]);
  const [weights,setWeights]=useState(validWeights(saved.weights)?saved.weights:[1,1,1]);
  const pendingAnchors=useRef(null);
  const [catalogMode,setCatalogMode]=useState(false);
  const [bundle,setBundle]=useState(null),[bundleLoading,setBundleLoading]=useState(false);
  const scrollFrames=useRef([]);
  const backlinks=useMemo(()=>buildBacklinks(laws),[laws]);
- useEffect(()=>{if(!note)return;const escape=e=>{if(e.key==='Escape'){noteSeq.current++;setNote(null);}};document.addEventListener('keydown',escape);return()=>document.removeEventListener('keydown',escape);},[note]);
- useEffect(()=>{noteSeq.current++;setNote(null);},[ids]);
+ useEffect(()=>{if(!note)return;const escape=e=>{if(e.key==='Escape'){noteAnchor.current=null;noteSeq.current++;setNote(null);}};document.addEventListener('keydown',escape);return()=>document.removeEventListener('keydown',escape);},[note]);
+ useEffect(()=>{noteAnchor.current=null;noteSeq.current++;setNote(null);setReadingHistory([[],[],[]]);},[ids]);
  useEffect(()=>{try{localStorage.setItem(STORE,JSON.stringify({ids,font,weights}));}catch{setNotice('このブラウザでは設定を保存できません。');}},[ids,font,weights]);
  useEffect(()=>{const url=new URL(location.href);const values=url.searchParams.get('laws')?.split(',');if(values?.length===3&&values.every(v=>v===''||/^[a-zA-Z0-9_]+$/.test(v)))setIds(values.map(v=>v||null));},[]);
  useEffect(()=>{
@@ -110,17 +123,41 @@ function App(){
   });
  }
  useEffect(()=>{laws.forEach((_,i)=>trackReading(i));const update=()=>laws.forEach((_,i)=>trackReading(i));window.addEventListener('resize',update);return()=>{window.removeEventListener('resize',update);scrollFrames.current.forEach(frame=>cancelAnimationFrame(frame));scrollFrames.current=[];};},[laws,font,mobile]);
- function jump(i,key){setSelected(p=>p.map((v,j)=>j===i?key:v));const panel=panes.current[i],target=panel?.querySelector(`[data-article="${key}"]`);if(target){panel.scrollTo({top:target.offsetTop-16,behavior:'smooth'});target.animate([{backgroundColor:'#d7eee9'},{backgroundColor:'transparent'}],{duration:1300});}}
+ function rememberPosition(index){
+  const anchor=captureReadingAnchor(panes.current[index]);if(!anchor)return;
+  setReadingHistory(prev=>prev.map((entries,i)=>i===index?[...entries.slice(-49),anchor]:entries));
+ }
+ function goBack(index){
+  const anchor=readingHistory[index].at(-1);if(!anchor)return;
+  closeNote();setMobile(index);setReadingHistory(prev=>prev.map((entries,i)=>i===index?entries.slice(0,-1):entries));
+  requestAnimationFrame(()=>{const panel=panes.current[index];panel?.scrollTo({top:panel.scrollTop,behavior:'instant'});restoreReadingAnchor(panel,anchor);trackReading(index);});
+ }
+ function jump(i,key){slide(i,{articleKey:key});}
  function slide(index,target){
   const panel=panes.current[index];if(!panel)return;
-  const element=(target.node?panel.querySelector(`[data-node="${target.node}"]`):null)||(target.articleKey!==undefined?panel.querySelector(`[data-article="${target.articleKey}"]`):panel.querySelector('.law'));
+  const element=(target.node?panel.querySelector(`[data-node="${target.node}"]`):null)||(target.articleKey?panel.querySelector(`[data-article="${target.articleKey}"]`):panel.querySelector('.law'));
   if(!element){setNotice('参照先の表示位置を見つけられませんでした。');return;}
-  setMobile(index);
+  rememberPosition(index);closeNote();setMobile(index);
   if(target.articleKey!==undefined)setSelected(p=>p.map((v,i)=>i===index?target.articleKey:v));
   requestAnimationFrame(()=>{const top=element.getBoundingClientRect().top-panel.getBoundingClientRect().top+panel.scrollTop;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;panel.scrollTo({top:Math.max(0,top-16),behavior:reduced?'auto':'smooth'});if(!reduced)element.animate([{backgroundColor:'#b8dfd6'},{backgroundColor:'transparent'}],{duration:1800});});
  }
  function backlink(index,key){slide(index,{articleKey:key});setNotice(`${LABELS[index]}の参照元条文を表示しました。`);}
- async function onReference(target,sourceIndex,anchor){
+ function startPreview(show){clearTimeout(previewTimer.current);clearTimeout(previewHide.current);if(note&&!hoverNote.current)return;previewTimer.current=setTimeout(show,300);}
+ function endPreview(){clearTimeout(previewTimer.current);clearTimeout(previewHide.current);previewHide.current=setTimeout(()=>{if(hoverNote.current)closeNote();},180);}
+ useEffect(()=>()=>{clearTimeout(previewTimer.current);clearTimeout(previewHide.current);},[]);
+ async function onReference(target,sourceIndex,anchor,preview=false){
+  clearTimeout(previewTimer.current);clearTimeout(previewHide.current);
+  const wasHover=hoverNote.current;hoverNote.current=preview;
+  if(!preview){
+   if(target.internal){slide(sourceIndex,{node:target.node,articleKey:target.article});return;}
+   const destination=laws.findIndex(l=>l?.num===target.lawNum);
+   if(destination>=0){const found=findTarget(laws[destination],target);if(found)slide(destination,{node:found.el.readerNode,articleKey:found.articleKey});else setNotice('表示中の版には指定の参照条文が見つかりませんでした。');return;}
+  }
+  if(note&&noteAnchor.current===anchor&&!preview){
+   if(!wasHover){closeNote();return;}
+   if(target.internal||laws[sourceIndex]?.num===target.lawNum||!laws.some(l=>l?.num===target.lawNum))return;
+   closeNote();
+  }noteAnchor.current=anchor;
   const rect=anchor.getBoundingClientRect();const width=Math.min(440,window.innerWidth-24),left=Math.max(12,Math.min(rect.left,window.innerWidth-width-12));const top=Math.max(12,Math.min(rect.bottom+8,window.innerHeight-330));
   const position={left,top,width};
   if(target.internal){
@@ -131,7 +168,7 @@ function App(){
   }
   const index=laws[sourceIndex]?.num===target.lawNum?sourceIndex:laws.findIndex(l=>l?.num===target.lawNum);
   if(index>=0){const found=findTarget(laws[index],target);
-   if(index===sourceIndex){noteSeq.current++;setNote({...position,target,law:laws[index],content:found?.el,loading:false,local:true,error:found?null:'表示中の版には指定の参照条文が見つかりませんでした。'});}
+   if(index===sourceIndex||preview){noteSeq.current++;setNote({...position,target,law:laws[index],content:found?.el,loading:false,local:true,error:found?null:'表示中の版には指定の参照条文が見つかりませんでした。'});}
    else if(found){slide(index,{node:found.el.readerNode,articleKey:found.articleKey});setNotice(`${LABELS[index]}の参照先へ移動しました。`);}else{setNotice('表示中の版には指定の参照条文が見つかりませんでした。');}return;
   }
   const seq=++noteSeq.current;setNote({target,...position,loading:true});
@@ -139,12 +176,25 @@ function App(){
    const found=findTarget(law,target);setNote({target,...position,loading:false,law,content:found?.el,error:found?null:'この版には指定された条文が見つかりませんでした。'});
   }catch(e){if(seq===noteSeq.current)setNote({target,...position,loading:false,error:e.message});}
  }
- function onDelegation(candidates,word,index,anchor){
+ function onDefinition(definition,index,anchor,preview=false){
+  if(!preview){slide(index,{node:definition.content.readerNode});return;}
+  clearTimeout(previewTimer.current);clearTimeout(previewHide.current);const wasHover=hoverNote.current;hoverNote.current=preview;
+  if(note&&noteAnchor.current===anchor&&!preview){if(wasHover)return;closeNote();return;}noteAnchor.current=anchor;noteSeq.current++;
+  const rect=anchor.getBoundingClientRect(),width=Math.min(440,window.innerWidth-24);
+  setNote({target:{},law:laws[index],content:definition.content,left:Math.max(12,Math.min(rect.left,window.innerWidth-width-12)),top:Math.max(12,Math.min(rect.bottom+8,window.innerHeight-330)),width,loading:false});
+ }
+ function previewDelegation(candidates,word,index,anchor){
+  if(candidates.length===1){const r=candidates[0],law=laws[r.sourceIndex],article=walk(law.el,'Article').find(a=>a.readerKey===r.key);onReference({lawNum:law.num,article:article.attr.Num},index,anchor,true);return;}
+  onDelegation(candidates,word,index,anchor,true);
+ }
+ function onDelegation(candidates,word,index,anchor,preview=false){
+  clearTimeout(previewTimer.current);clearTimeout(previewHide.current);const wasHover=hoverNote.current;hoverNote.current=preview;
+  if(note&&noteAnchor.current===anchor&&!preview){if(wasHover&&candidates.length>1)return;closeNote();if(candidates.length>1)return;}noteAnchor.current=anchor;
   if(candidates.length===1){closeNote();backlink(candidates[0].sourceIndex,candidates[0].key);return;}
   const rect=anchor.getBoundingClientRect(),width=Math.min(440,window.innerWidth-24);noteSeq.current++;
   setNote({target:{},law:laws[index],candidates,word,left:Math.max(12,Math.min(rect.left,window.innerWidth-width-12)),top:Math.max(12,Math.min(rect.bottom+8,window.innerHeight-330)),width,loading:false});
  }
- function closeNote(){noteSeq.current++;setNote(null);}
+ function closeNote(){clearTimeout(previewTimer.current);clearTimeout(previewHide.current);hoverNote.current=false;noteAnchor.current=null;noteSeq.current++;setNote(null);}
  async function search(e){e.preventDefault();if(!query.trim())return;const seq=++searchSeq.current;setSearching(true);setBundleLoading(false);setResults([]);setSearchError('');try{const d=await request(`${API}/laws?law_title=${encodeURIComponent(query.trim())}&limit=100&law_type=${TYPES[dialog]||'Act'}&response_format=json`);if(seq===searchSeq.current){setResults(d.laws||[]);if(!d.laws?.length)setSearchError('一致する法令がありません。検索語を短くしてお試しください。');}}catch(e){if(seq===searchSeq.current)setSearchError(e.message);}finally{if(seq===searchSeq.current)setSearching(false);}}
  function openSearch(i){setCatalogMode(false);searchSeq.current++;setDialog(i);setQuery('');setResults([]);setSearchError('');setSearching(false);setBundle(null);setBundleLoading(false);}
  function closeSearch(){searchSeq.current++;setDialog(null);setSearching(false);setBundle(null);setBundleLoading(false);}
@@ -169,19 +219,19 @@ function App(){
  async function share(){const url=new URL(location.href);url.searchParams.set('laws',ids.join(','));try{await navigator.clipboard.writeText(url.toString());setNotice('この3法令を開くURLをコピーしました。');}catch{setNotice(url.toString());}}
  return <div className="app" style={{'--reader-font':`${font}px`}}>
   <style>{htmlCSS}</style>
-  <header className="header"><div className="brand"><span className="brand-mark">三</span><div><h1>三段法令ビューア</h1><p>法律と、その先を。並べて読む。</p></div></div><div className="header-actions"><button className="bundle-open" onClick={()=>openSearch(3)}>法令を選ぶ</button><div className="font-control"><button aria-label="文字を小さく" onClick={()=>preserveReading(()=>setFont(v=>Math.max(13,v-1)))}>A−</button><button aria-label="文字を大きく" onClick={()=>preserveReading(()=>setFont(v=>Math.min(24,v+1)))}>A＋</button></div><button className="share" onClick={share}>閲覧URLをコピー ↗</button></div></header>
+  <header className="header"><div className="brand"><span className="brand-mark">三</span><div><h1>三段法令ビューア</h1><p>法律と、その先を。並べて読む。</p></div></div><div className="header-actions"><button className="bundle-open" onClick={()=>openSearch(3)}>法令を選ぶ</button><div className="font-control"><button aria-label="文字を小さく" onClick={()=>preserveReading(()=>setFont(v=>Math.max(11,v-1)))}>A−</button><button aria-label="文字を大きく" onClick={()=>preserveReading(()=>setFont(v=>Math.min(24,v+1)))}>A＋</button></div><button className="share" onClick={share}>閲覧URLをコピー ↗</button></div></header>
   <nav className="mobile-tabs" aria-label="表示する列">{LABELS.map((label,i)=><button key={label} aria-pressed={mobile===i} onClick={()=>setMobile(i)}>{label}</button>)}</nav>
   <main className="columns" style={{'--column-widths':weights.map(v=>`minmax(0, ${v}fr)`).join(' ')}}>{LABELS.map((label,i)=><div className={`column col-${i} ${mobile===i?'active':''}`} key={label}>
-   <button className="column-width-toggle" aria-label={weights[i]===2?`${label}の幅を元に戻す`:`${label}の幅を2倍にする`} aria-pressed={weights[i]===2} title={weights[i]===2?'等幅に戻す':'この列を2倍に広げる'} onClick={()=>changeWeights(toggleColumnWidth(weights,i))}><span className="colored-label">{label}</span><svg viewBox="0 0 24 16" width="24" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">{weights[i]===2?<><path d="M2 8h7m-3-3 3 3-3 3M22 8h-7m3-3-3 3 3 3"/></>:<><path d="M10 8H3m3-3L3 8l3 3M14 8h7m-3-3 3 3-3 3"/></>}</svg></button>
-   <div className="column-header"><h3>{laws[i]?.title||(loading[i]?'法令を読み込み中…':!ids[i]?'法令が選ばれていません':'法令を取得できませんでした')}</h3><p className="law-number">{laws[i]?.num||'　'}{laws[i]?.date&&<span className="law-date">施行日 {laws[i].date}</span>}</p><label className="jump-label">条文へ移動<select aria-label={`${label}の条文へ移動`} disabled={!laws[i]} value={selected[i]} onChange={e=>jump(i,e.target.value)}><option value="">目次・前文</option>{laws[i]?.articles.map(a=><option key={a.key} value={a.key}>{a.label}</option>)}</select></label>
+   <button className="column-width-toggle" aria-label={weights[i]===2?`${label}の幅を元に戻す`:`${label}の幅を2倍にする`} aria-pressed={weights[i]===2} title={weights[i]===2?'等幅に戻す':'この列を2倍に広げる'} onClick={()=>changeWeights(toggleColumnWidth(weights,i))}><span className="colored-label">{label}</span><svg className="column-arrow-icon" viewBox="0 0 32 20" width="32" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{weights[i]===2?<path d="M2 10h10M8 6l4 4-4 4M30 10H20m4-4-4 4 4 4"/>:<path d="M4 10h24M9 5l-5 5 5 5M23 5l5 5-5 5"/>}</svg></button>
+   <div className="column-header"><h3>{laws[i]?.title||(loading[i]?'法令を読み込み中…':!ids[i]?'法令が選ばれていません':'法令を取得できませんでした')}</h3><p className="law-number">{laws[i]?.num||'　'}{laws[i]?.date&&<span className="law-date">施行日 {laws[i].date}</span>}</p><label className="jump-label"><button type="button" className="reading-back" aria-label={`${label}の一つ前の位置に戻る`} title="一つ前の位置に戻る" disabled={!readingHistory[i].length} onClick={()=>goBack(i)}>↶ 戻る</button>条文へ移動<select aria-label={`${label}の条文へ移動`} disabled={!laws[i]} value={selected[i]} onChange={e=>jump(i,e.target.value)}><option value="">目次・前文</option>{laws[i]?.articles.map(a=><option key={a.key} value={a.key}>{a.label}</option>)}</select></label>
    </div>
    <div className="reader" onScroll={()=>trackReading(i)} ref={el=>panes.current[i]=el} tabIndex="0" aria-label={`${label}の本文`}>
-    {loading[i]?<div className="loading"><div className="spinner"/><p>法令を読み込んでいます</p></div>:errors[i]?<div role="alert" className="error"><h4>法令を取得できませんでした</h4><p>{errors[i]}</p><button onClick={()=>setIds(p=>[...p])}>再読み込み</button><button onClick={()=>openSearch(i)}>別の法令を選ぶ</button></div>:!ids[i]?<div className="empty-law"><p>この列に表示する法令は未選択です。</p><button onClick={()=>openSearch(i)}>法令を選ぶ</button></div>:laws[i]&&<RenderBoundary key={laws[i].revision}><HTMLLaw el={laws[i].el} indent={0} htmlOptions={{WrapComponent:Wrap,renderControlEL:true,renderPDFAsLink:true,options:{law:laws[i],laws,index:i,onReference,onDelegation,onBacklink:backlink,backlinks:backlinks[i]}}}/></RenderBoundary>}
+    {loading[i]?<div className="loading"><div className="spinner"/><p>法令を読み込んでいます</p></div>:errors[i]?<div role="alert" className="error"><h4>法令を取得できませんでした</h4><p>{errors[i]}</p><button onClick={()=>setIds(p=>[...p])}>再読み込み</button><button onClick={()=>openSearch(i)}>別の法令を選ぶ</button></div>:!ids[i]?<div className="empty-law"><p>この列に表示する法令は未選択です。</p><button onClick={()=>openSearch(i)}>法令を選ぶ</button></div>:laws[i]&&<RenderBoundary key={laws[i].revision}><HTMLLaw el={laws[i].el} indent={0} htmlOptions={{WrapComponent:Wrap,renderControlEL:true,renderPDFAsLink:true,options:{law:laws[i],laws,index:i,onReference,onDefinition,onDelegation,previewDelegation,startPreview,endPreview,onBacklink:backlink,backlinks:backlinks[i]}}}/></RenderBoundary>}
    </div><div className="column-footer">{laws[i]?.articles.length||0} 条文（附則を含む）{laws[i]&&<a href={`https://laws.e-gov.go.jp/law/${laws[i].id}`} target="_blank" rel="noreferrer">e-Govで開く ↗</a>}</div>
   </div>)}</main>
   <p className="notice" role="status">{notice}</p>
-  <footer className="footer"><span>法令データ：<a href="https://laws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov法令検索</a> ・表示時に取得した版を各列に記載</span><span>Powered by <a href="https://github.com/yamachig/Lawtext" target="_blank" rel="noreferrer">Lawtext</a> <a href={`${import.meta.env.BASE_URL}LAWText-LICENSE.txt`} target="_blank">MIT License</a></span></footer>
-  {note&&<aside className="reference-note" role="dialog" aria-label="参照法令の付箋" style={{left:note.left,top:note.top,width:note.width,maxHeight:`calc(100dvh - ${note.top+12}px)`}} onKeyDown={e=>{if(e.key==='Escape')closeNote();}}><div className="note-heading"><span>{note.candidates?'この条項を参照する下位法令':note.local?'同じ法令の参照条文':'参照法令'}</span><button aria-label="付箋を閉じる" onClick={closeNote}>×</button></div><h3>{note.law?.title||note.target.title||note.target.lawNum}</h3><p className="note-meta">{note.law?.num||note.target.lawNum}{note.law?.date&&` ／ 施行日 ${note.law.date}`}</p>{note.target.article&&!note.target.internal&&<p className="note-target">第{note.target.article.replaceAll('_','条の')}条{note.target.paragraph&&` 第${note.target.paragraph}項`}{note.target.item&&` 第${note.target.item}号`}</p>}{note.target.internal&&<p className="note-target">{note.law.articles.find(a=>a.key===note.target.article)?.label}{note.target.count>1&&`（${note.target.count}箇所）`}</p>}<div className="note-body">{note.candidates?<div className="delegation-choices"><p>「{note.word}」の参照候補を選んでください。</p>{note.candidates.map(r=><button key={`${r.sourceIndex}-${r.key}`} onClick={()=>{closeNote();backlink(r.sourceIndex,r.key);}}>{LABELS[r.sourceIndex]}・{r.label} →</button>)}</div>:note.loading?<p role="status">参照条文を読み込み中…</p>:note.error?<p role="alert">{note.error}</p>:<RenderBoundary key={note.law.revision}><HTMLAnyELs els={note.contents||[note.content]} indent={0} htmlOptions={{renderControlEL:false,renderPDFAsLink:true}}/></RenderBoundary>}</div>{note.law&&<a className="note-source" href={`https://laws.e-gov.go.jp/law/${note.law.id}`} target="_blank" rel="noreferrer">e-Govで全文を開く ↗</a>}</aside>}
+  <footer className="footer"><span>法令データ：<a href="https://laws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov法令検索</a></span><span>Powered by <a href="https://github.com/yamachig/Lawtext" target="_blank" rel="noreferrer">Lawtext</a> <a href={`${import.meta.env.BASE_URL}LAWText-LICENSE.txt`} target="_blank">MIT License</a></span></footer>
+  {note&&<aside className="reference-note" role="dialog" aria-label="参照法令の付箋" onMouseEnter={()=>clearTimeout(previewHide.current)} onMouseLeave={endPreview} style={{left:note.left,top:note.top,width:note.width,maxHeight:`calc(100dvh - ${note.top+12}px)`}} onKeyDown={e=>{if(e.key==='Escape')closeNote();}}><div className="note-heading"><h3>{note.law?.title||note.target.title||note.target.lawNum}</h3><button aria-label="付箋を閉じる" onClick={closeNote}>×</button></div><div className="note-body">{note.candidates?<div className="delegation-choices"><p>「{note.word}」の参照候補を選んでください。</p>{note.candidates.map(r=><button key={`${r.sourceIndex}-${r.key}`} onClick={()=>{closeNote();backlink(r.sourceIndex,r.key);}}>{LABELS[r.sourceIndex]}・{r.label} →</button>)}</div>:note.loading?<p role="status">参照条文を読み込み中…</p>:note.error?<p role="alert">{note.error}</p>:<RenderBoundary key={note.law.revision}>{(note.contents||[note.content]).map((content,k)=><div className="note-excerpt" key={k}>{noteContext(note.law,content)&&<p className="note-location">{noteContext(note.law,content)}</p>}<HTMLAnyELs els={[content]} indent={0} htmlOptions={{renderControlEL:false,renderPDFAsLink:true}}/></div>)}</RenderBoundary>}</div>{note.law&&<a className="note-source" href={`https://laws.e-gov.go.jp/law/${note.law.id}`} target="_blank" rel="noreferrer">e-Govで全文を開く ↗</a>}</aside>}
   {dialog!==null&&<div className="overlay" onClick={e=>{if(e.target===e.currentTarget)closeSearch();}}><dialog open className="dialog" aria-modal="true" aria-labelledby="dialog-title" onKeyDown={e=>{if(e.key==='Escape')closeSearch();if(e.key==='Tab'){const focusable=[...e.currentTarget.querySelectorAll('button:not(:disabled),input,a[href]')];const first=focusable[0],last=focusable.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}}}><div className="dialog-heading"><div><span className="eyebrow">SELECT LAW</span><h2 id="dialog-title">法令を選ぶ</h2></div><button aria-label="閉じる" onClick={closeSearch}>×</button></div><nav className="selection-targets" aria-label="選択する法令"><button aria-pressed={dialog===3} onClick={()=>openSearch(3)}>3法令まとめて</button>{LABELS.map((label,i)=><button key={label} aria-pressed={dialog===i} onClick={()=>openSearch(i)}>{label}</button>)}</nav>{!bundle&&!bundleLoading&&<nav className="selection-modes" aria-label="法令の選び方"><button aria-pressed={!catalogMode} onClick={()=>{searchSeq.current++;setSearching(false);setSearchError('');setCatalogMode(false);}}>名前で検索</button><button aria-pressed={catalogMode} onClick={()=>{searchSeq.current++;setSearching(false);setSearchError('');setCatalogMode(true);}}>一覧から選ぶ</button></nav>}{!bundle&&!bundleLoading&&catalogMode&&<LawCatalog type={TYPES[dialog]||'Act'} onChoose={r=>choose(r.law_info.law_id,r)}/>} {!bundle&&!catalogMode&&<form onSubmit={search}><label htmlFor="search-law">法令名で検索</label><div className="search-row"><input id="search-law" autoFocus value={query} onChange={e=>setQuery(e.target.value)} placeholder="例：個人情報、建築基準"/><button className="primary" disabled={searching||!query.trim()}>{searching?'検索中…':'検索'}</button></div></form>}<div className="results" aria-live="polite">{searchError&&<p role="alert">{searchError}</p>}{!bundle&&!bundleLoading&&!catalogMode&&results.map(r=><button className="result" key={r.law_info.law_id} onClick={()=>choose(r.law_info.law_id)}><strong>{r.revision_info.law_title}</strong><span>{r.law_info.law_num} · {!isAvailableLaw(r)?'廃止法令':r.revision_info.current_revision_status||''}</span></button>)}</div>{bundleLoading&&<p role="status">施行令・施行規則を探しています…</p>}{bundle&&<div className="bundle-review"><h3>{bundle.act.revision_info.law_title}</h3><p>同名の施行令・施行規則を選択しました。必要に応じて候補を変更できます。</p>{[1,2].map(i=><label key={i}>{LABELS[i]}<select aria-label={`一括選択の${LABELS[i]}`} value={bundle.picks[i]||''} onChange={e=>setBundle(p=>({...p,picks:p.picks.map((v,j)=>j===i?e.target.value||null:v)}))}><option value="">該当なし／表示しない</option>{bundle.related.filter(r=>TYPES[i].split(',').includes(r.law_info.law_type)).map(r=><option key={r.law_info.law_id} value={r.law_info.law_id}>{r.revision_info.law_title}</option>)}</select></label>)}<button className="primary" onClick={applyBundle}>この組み合わせで開く</button><button onClick={()=>setBundle(null)}>法律を選び直す</button></div>}<div className="default-choice"><p>表示例</p><button onClick={()=>dialog===3?(setIds([...DEFAULTS]),closeSearch()):choose(DEFAULTS[dialog])}>{dialog===3?'個人情報保護法・施行令・施行規則をまとめて開く':['個人情報の保護に関する法律','個人情報の保護に関する法律施行令','個人情報の保護に関する法律施行規則'][dialog]} →</button></div><p className="dialog-note">e-Gov法令APIを使用します。検索結果には廃止法令が含まれる場合があります。</p></dialog></div>}
  </div>;
 }
