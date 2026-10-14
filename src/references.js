@@ -43,7 +43,11 @@ export function buildBacklinks(laws){
     const targetIndex=laws.findIndex(l=>l?.num===target.lawNum);if(targetIndex<0||targetIndex===sourceIndex)continue;
     const located=findTarget(laws[targetIndex],{article:target.article});if(!located)continue;
     const list=maps[targetIndex].get(located.articleKey)||[];
-    let entry=list.find(x=>x.sourceIndex===sourceIndex&&x.key===sourceArticle.readerKey);if(!entry){entry={sourceIndex,key:sourceArticle.readerKey,label:source.articles.find(a=>a.key===sourceArticle.readerKey)?.label,upperTargets:[]};list.push(entry);}entry.upperTargets.push(target);
+    let entry=list.find(x=>x.sourceIndex===sourceIndex&&x.key===sourceArticle.readerKey);if(!entry){entry={sourceIndex,key:sourceArticle.readerKey,label:source.articles.find(a=>a.key===sourceArticle.readerKey)?.label,upperTargets:[],relations:[]};list.push(entry);}entry.upperTargets.push(target);
+    const sourceContainer=env.sentenceEnv.container.thisOrClosest(c=>['Item','Paragraph'].includes(c.el.tag));
+    const sentence=env.sentenceEnv.text,tail=sentence.slice(sentence.indexOf(env.pointer.text())+env.pointer.text().length);
+    const defining=/^の(?:[^。]{0,55})(?:で定める|に規定する|の規定による)/.test(tail);
+    entry.relations.push({target,node:sourceContainer?.el.readerNode,defining});
     maps[targetIndex].set(located.articleKey,list);
    }
   }
@@ -52,6 +56,22 @@ export function buildBacklinks(laws){
 
 export function delegationCandidates(backlinks,context,word){
  const wanted=word==='政令'?1:2;
- return (backlinks.get(context.article)||[]).filter(r=>r.sourceIndex===wanted&&r.sourceIndex>context.index&&r.upperTargets.some(t=>(!context.paragraph||t.paragraph===context.paragraph)&&(!t.item||t.item===context.item)));
+ const ranked=(backlinks.get(context.article)||[]).filter(r=>r.sourceIndex===wanted&&r.sourceIndex>context.index).flatMap(r=>{
+  const relations=r.relations||r.upperTargets.map(target=>({target}));
+  const matches=relations.flatMap(relation=>{
+   const t=relation.target;
+   if(context.paragraph&&t.paragraph&&t.paragraph!==context.paragraph)return [];
+   if(context.item&&t.item&&t.item!==context.item)return [];
+   // A delegation outside an item must not resolve to a different item's reference.
+   if(!context.item&&t.item)return [];
+   const score=(context.paragraph&&t.paragraph===context.paragraph?4:0)+(context.item&&t.item===context.item?8:0)+(relation.defining?2:0);
+   return [{...relation,score}];
+  });
+  if(!matches.length)return [];
+  const best=Math.max(...matches.map(m=>m.score));const exact=matches.filter(m=>m.score===best);
+  return [{...r,score:best,destinationNode:exact.length===1?exact[0].node:undefined}];
+ });
+ const best=Math.max(-1,...ranked.map(r=>r.score));
+ return ranked.filter(r=>r.score===best);
 }
 export const delegationWords=/(政令|(?:[一-龥]{0,16})省令|(?:[一-龥]{0,16})規則)(?=で(?:定め|示|規定))/g;

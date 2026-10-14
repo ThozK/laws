@@ -57,3 +57,35 @@ test('付箋は定義文と号の所属する条・項を表示する',()=>{
  const found=findTarget(laws[0],{article:'2',paragraph:'1',item:'1'});
  assert.equal(noteContext(laws[0],found.el),'第二条　第1項　第1号');
 });
+
+import {buildAlignment,mainArticles} from '../src/alignment.js';
+test('三段表は本則の全条文を一度ずつ配置し、各列の順序を保つ',()=>{
+ const model=buildAlignment(laws);
+ assert.deepEqual(model.articles.map(a=>a.length),[185,40,71]);
+ model.articles.forEach((articles,i)=>{assert.equal(model.assignments[i].size,articles.length);let previous=0;for(const article of articles){const placement=model.assignments[i].get(article.readerKey);assert.ok(placement.row>=previous);if(placement.status==='unmatched')assert.equal(placement.row,previous);previous=placement.row;}});
+ const order1=mainArticles(laws[1])[0],rule2=mainArticles(laws[2])[1];
+ assert.equal(model.assignments[1].get(order1.readerKey).row,1);
+ assert.equal(model.assignments[2].get(rule2.readerKey).row,1);
+});
+
+import {buildDetailedAlignment,detailedUnits} from '../src/alignment.js';
+test('項・号の三段表は全単位を保持し順序を逆転させない',()=>{
+ const model=buildDetailedAlignment(laws);
+ model.articles.forEach((units,i)=>{assert.equal(model.assignments[i].size,units.length);let previous=-1;for(const el of units){const placement=model.assignments[i].get(el.readerNode);assert.ok(placement.row>=previous);previous=placement.row;}});
+ const lawP2=detailedUnits(laws[0]).find(u=>u.article.attr.Num==='2'&&u.el.tag==='Paragraph'&&u.el.attr.Num==='2').el;
+ const order1=mainArticles(laws[1])[0];
+ assert.equal(model.assignments[0].get(lawP2.readerNode).row,model.assignments[1].get(order1.readerNode).row);
+ const orderItem=detailedUnits(laws[1]).find(u=>u.article.attr.Num==='1'&&u.el.tag==='Item'&&u.el.attr.Num==='1').el;
+ const rule2=mainArticles(laws[2])[1];
+ assert.equal(model.assignments[1].get(orderItem.readerNode).row,model.assignments[2].get(rule2.readerNode).row);
+});
+
+test('同じ条の委任先は項・号の一致と直接の委任参照を優先する',()=>{
+ const entry=(key,paragraph,item,defining,node)=>({key,sourceIndex:2,upperTargets:[{paragraph,item}],relations:[{target:{paragraph,item},defining,node}]});
+ const backlinks=new Map([['a',[entry('broad','2',undefined,false,'b'),entry('item1','2','1',true,'n1'),entry('item2','2','2',true,'n2'),entry('other','3','1',true,'n3')]]]);
+ const exact=delegationCandidates(backlinks,{article:'a',paragraph:'2',item:'2',index:0},'環境省令');
+ assert.deepEqual(exact.map(e=>e.key),['item2']);assert.equal(exact[0].destinationNode,'n2');
+ assert.deepEqual(delegationCandidates(backlinks,{article:'a',paragraph:'2',index:0},'環境省令').map(e=>e.key),['broad']);
+ const ambiguous=new Map([['a',[entry('one','2','2',true,'n1'),entry('two','2','2',true,'n2')]]]);
+ assert.equal(delegationCandidates(ambiguous,{article:'a',paragraph:'2',item:'2',index:0},'環境省令').length,2);
+});

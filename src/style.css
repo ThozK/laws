@@ -43,3 +43,11 @@
 @media(hover:none){.reader .reference{text-decoration-color:#438f98}.reader .reference.ref-cross{background:var(--reference-mark)}}
 
 .reading-back{font-size:10px;padding:5px 7px;white-space:nowrap}.reading-back:disabled{opacity:.35;cursor:default}.jump-label{gap:7px}
+
+.aligned-columns section[data-alignment-row]{border-top:1px solid #d3ded9;padding-top:12px;margin-bottom:0}.aligned-columns section[data-alignment-status="unmatched"]:before{content:'上位参照なし・前条に続けて表示';display:block;font-size:10px;line-height:1.6;color:#7e7053;margin-bottom:8px}.aligned-columns section[data-alignment-status="order-preserved"]:before{content:'条文順を優先して配置';display:block;font-size:10px;line-height:1.6;color:#7e7053;margin-bottom:8px}.header-actions>button[aria-pressed=true]{background:#356b60;border-color:#9abcb0}@media(max-width:700px){.aligned-columns{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));overflow-x:auto}.aligned-columns .column{display:flex}.aligned-columns .reader{height:65dvh}}
+
+.detail-aligned [data-alignment-row]{display:flow-root}.detail-aligned div[data-alignment-row]{border-top:1px dotted #d3ded9;padding-top:6px}.detail-aligned [data-alignment-status="order-preserved"]:before{content:'順序を維持';display:block;font-size:10px;color:#7e7053}.detail-aligned section[data-alignment-status="unmatched"]:before{content:'上位参照なし・前条に続けて表示'}
+
+.aligned-columns section[data-alignment-status="unmatched"]:before,.detail-aligned section[data-alignment-status="unmatched"]:before{content:none}.aligned-columns [data-alignment-status="unmatched"]{border-top:0;padding-top:0}
+
+.github-profile{display:inline-flex;align-items:center;gap:5px;margin-left:14px;color:#53675f;text-decoration:none;vertical-align:middle}.github-profile:hover{color:#17343b;text-decoration:underline}.github-profile svg{flex-shrink:0}
