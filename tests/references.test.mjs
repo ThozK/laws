@@ -89,3 +89,12 @@ test('同じ条の委任先は項・号の一致と直接の委任参照を優�
  const ambiguous=new Map([['a',[entry('one','2','2',true,'n1'),entry('two','2','2',true,'n2')]]]);
  assert.equal(delegationCandidates(ambiguous,{article:'a',paragraph:'2',item:'2',index:0},'環境省令').length,2);
 });
+
+import {citationRuns} from '../src/citations.js';
+test('法令名と直後の条項を一つの参照にまとめ、末端の項まで指定する',()=>{
+ const sentence=laws[2].analysis.sentenceEnvs.find(e=>e.text.includes('健康保険法（'));
+ const runs=citationRuns(sentence.el.children,laws[2]);
+ assert.equal(runs[0].citation,true);assert.match(runs[0].text,/健康保険法.*第三条第十一項/);
+ assert.equal(runs[0].target.article,'3');assert.equal(runs[0].target.paragraph,'11');
+ assert.equal(runs.map(r=>r.citation?r.text:typeof r==='string'?r:r.text()).join(''),sentence.el.text());
+});

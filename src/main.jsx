@@ -14,6 +14,7 @@ import {referenceKind} from './referenceColors.js';
 import {definitionFor} from './definitions.js';
 import {noteContext} from './noteContext.js';
 import {buildAlignment,buildDetailedAlignment,alignArticleRows,clearAlignment} from './alignment.js';
+import {citationRuns} from './citations.js';
 import './style.css';
 
 const API='https://laws.e-gov.go.jp/api/2';
@@ -48,14 +49,20 @@ function Wrap({htmlComponentID,childProps,ChildComponent}){
   if(el.text()==='この法律')return <>{el.text()}</>;
   const env=options.law?.analysis.pointerEnvByEL.get(el);
   const targets=env?.located?.type==='external'?externalTargets(env):env?.located?.type==='internal'?internalTargets(env):[];
+  if(targets.length&&targets.every(t=>t.target)){
+   const target={...targets.at(-1).target,internal:env.located.type==='internal'};
+   return <ReferenceButton options={options} preview={anchor=>options.onReference(target,options.index,anchor,true)} className={`reference ${!target.internal&&options.laws.some((l,i)=>i!==options.index&&l?.num===target.lawNum)?'ref-cross':''} ref-${referenceKind(target,options.index,options.laws)}`} title="参照条項を表示" onClick={e=>options.onReference(target,options.index,e.currentTarget)}>{el.text()}</ReferenceButton>;
+  }
   if(targets.some(t=>t.target))return <>{targets.map((t,k)=>t.target?<ReferenceButton options={options} preview={anchor=>options.onReference({...t.target,internal:env.located.type==='internal'},options.index,anchor,true)} className={`reference ${!t.target.internal&&env.located.type!=='internal'&&options.laws.some((l,i)=>i!==options.index&&l?.num===t.target.lawNum)?'ref-cross':''} ref-${referenceKind({...t.target,internal:env.located.type==='internal'},options.index,options.laws)}`} key={k} title="参照条文を表示" onClick={e=>options.onReference({...t.target,internal:env.located.type==='internal'},options.index,e.currentTarget)}>{t.text}</ReferenceButton>:<React.Fragment key={k}>{t.text}</React.Fragment>)}</>;
  }
  if(htmlComponentID==='HTMLControlRun'&&['____LawRef','____LawNum'].includes(el.tag)){
   const lawNum=el.attr.lawNum||el.text();
   return <ReferenceButton options={options} preview={anchor=>options.onReference({lawNum,title:el.attr.suggestedLawTitle},options.index,anchor,true)} className={`reference law-reference ${options.laws.some((l,i)=>i!==options.index&&l?.num===lawNum)?'ref-cross':''} ref-${referenceKind({lawNum},options.index,options.laws)}`} title="参照法令を表示" onClick={e=>options.onReference({lawNum,title:el.attr.suggestedLawTitle},options.index,e.currentTarget)}>{el.text()}</ReferenceButton>;
  }
- if(htmlComponentID==='HTMLSentenceChildrenRun'&&options.article!==undefined){
-  const parts=childProps.els.map((part,k)=>{
+ if(htmlComponentID==='HTMLSentenceChildrenRun'){
+  const parts=citationRuns(childProps.els,options.law).map((part,k)=>{
+   if(part?.citation){const target=part.target;return <ReferenceButton key={k} options={options} preview={anchor=>options.onReference(target,options.index,anchor,true)} className={`reference citation-reference ${options.laws?.some((l,i)=>i!==options.index&&l?.num===target.lawNum)?'ref-cross':''} ref-${referenceKind(target,options.index,options.laws||[])}`} title="参照条項を表示" onClick={e=>options.onReference(target,options.index,e.currentTarget)}>{part.text}</ReferenceButton>;}
+
    if(typeof part!=='string')return <ChildComponent key={k} {...childProps} els={[part]}/>;
    const pieces=[];let offset=0;
    for(const match of part.matchAll(delegationWords)){
@@ -92,7 +99,7 @@ function App(){
  const [weights,setWeights]=useState(validWeights(saved.weights)?saved.weights:[1,1,1]);
  const [aligned,setAligned]=useState(false);
  const scrollLeader=useRef({index:-1,until:0});
- const [alignmentDetail,setAlignmentDetail]=useState(false);
+ const [alignmentDetail,setAlignmentDetail]=useState(true);
  const alignment=useMemo(()=>alignmentDetail?buildDetailedAlignment(laws):buildAlignment(laws),[laws,alignmentDetail]);
  useLayoutEffect(()=>{
   if(!aligned){clearAlignment(panes.current);return;}
