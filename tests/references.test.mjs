@@ -98,3 +98,48 @@ test('法令名と直後の条項を一つの参照にまとめ、末端の項�
  assert.equal(runs[0].target.article,'3');assert.equal(runs[0].target.paragraph,'11');
  assert.equal(runs.map(r=>r.citation?r.text:typeof r==='string'?r:r.text()).join(''),sentence.el.text());
 });
+
+import {isFirstParagraphReference} from '../src/alignment.js';
+test('条の上位対応の基準は第1項の参照とする',()=>{
+ for(const law of laws.slice(1)){
+  let later=0;
+  for(const env of law.analysis.pointerEnvByEL.values()){
+   const article=env.sentenceEnv.container.thisOrClosest(c=>c.el.tag==='Article')?.el;
+   const paragraph=env.sentenceEnv.container.thisOrClosest(c=>c.el.tag==='Paragraph')?.el;
+   if(!article||!paragraph)continue;
+   if(paragraph!==article.children.find(c=>c.tag==='Paragraph')){assert.equal(isFirstParagraphReference(env,article),false);later++;}
+  }
+  assert.ok(later>0);
+ }
+
+});
+
+import {monotoneAnchorIndices} from '../src/alignment.js';
+test('孤立した先方参照は後続の配置を引きずらない',()=>{
+ assert.deepEqual([...monotoneAnchorIndices([1,2,900,3,4,5])].sort((a,b)=>a-b),[0,1,3,4,5]);
+ assert.deepEqual([...monotoneAnchorIndices([1,2,900,900,3,4,5,6])].sort((a,b)=>a-b),[0,1,4,5,6,7]);
+ assert.deepEqual([...monotoneAnchorIndices([1,null,100,101])].sort((a,b)=>a-b),[0,2,3]);
+ assert.equal(monotoneAnchorIndices([null,null]).size,0);
+});
+
+test('条の見出しと第1項は同じ行に固定して余白の二重計上を防ぐ',()=>{
+ const model=buildDetailedAlignment(laws);
+ laws.forEach((law,i)=>{for(const article of mainArticles(law)){const first=article.children.find(c=>c.tag==='Paragraph');if(first)assert.equal(model.assignments[i].get(article.readerNode).row,model.assignments[i].get(first.readerNode).row);}});
+});
+test('飛び参照の後も通常の上位参照へ復帰でき、全条文を保持する',()=>{
+ const node=(tag,num,id,children=[])=>({tag,attr:{Num:String(num)},readerNode:id,readerKey:id,children});
+ const make=(num,count)=>{const articles=Array.from({length:count},(_,i)=>node('Article',i+1,`${num}a${i+1}`,[node('Paragraph',1,`${num}p${i+1}`)]));return {num,el:{children:[{tag:'LawBody',children:[{tag:'MainProvision',children:articles}]}]},analysis:{pointerEnvByEL:new Map()},articles};};
+ const upper=make('law',10),lower=make('order',5);
+ [1,2,10,3,4].forEach((target,i)=>{const article=lower.articles[i],paragraph=article.children[0],fragment={tag:'____PF',attr:{targetType:'Article',num:String(target)},text:()=>`第${target}条`};const container={thisOrClosest:fn=>[paragraph,article].map(el=>({el})).find(fn)};lower.analysis.pointerEnvByEL.set(i,{sentenceEnv:{container},pointer:{children:[fragment]},located:{type:'external',lawRef:{attr:{lawNum:'law'}},fqPrefixFragments:[],skipSameCount:0}});});
+ const model=buildDetailedAlignment([upper,lower,null]);
+ assert.equal(model.assignments[1].get(lower.articles[2].readerNode).status,'order-preserved');
+ for(const [low,up]of [[3,2],[4,3]])assert.equal(model.assignments[1].get(lower.articles[low].readerNode).row,model.assignments[0].get(upper.articles[up].readerNode).row);
+ assert.equal(model.assignments[1].size,10);
+});
+
+
+test('条番号の距離では制限せず、単調に続く大きな跳びは採用する',()=>{
+ assert.deepEqual([...monotoneAnchorIndices([2,80,81,150])].sort((a,b)=>a-b),[0,1,2,3]);
+ assert.deepEqual([...monotoneAnchorIndices([2,150,80,81,200])].sort((a,b)=>a-b),[0,2,3,4]);
+ assert.deepEqual([...monotoneAnchorIndices([2,2,80,80,150])].sort((a,b)=>a-b),[0,1,2,3,4]);
+});
