@@ -1,4 +1,4 @@
-import {externalTargets} from './references.js';
+import {externalTargets,findTarget,subitemLevel} from './references.js';
 export function mainArticles(law){
  const main=law?.el.children.find(e=>e.tag==='LawBody')?.children.find(e=>e.tag==='MainProvision');
  const result=[];function visit(el){if(el.tag==='Article')result.push(el);for(const c of el.children||[])if(typeof c!=='string')visit(c);}if(main)visit(main);return result;
@@ -30,7 +30,7 @@ export function buildAlignment(laws){
  }
  return {articles,assignments};
 }
-export function clearAlignment(panes){for(const pane of panes)if(pane)pane.style.paddingBottom='';for(const pane of panes)for(const section of pane?.querySelectorAll('[data-alignment-row]')||[]){section.style.marginTop='';delete section.dataset.alignmentRow;delete section.dataset.alignmentStatus;}}
+export function clearAlignment(panes){for(const pane of panes)if(pane)pane.style.removeProperty('--alignment-tail');for(const pane of panes)for(const section of pane?.querySelectorAll('[data-alignment-row]')||[]){section.style.marginTop='';delete section.dataset.alignmentRow;delete section.dataset.alignmentStatus;}}
 export function alignArticleRows(panes,model){
  clearAlignment(panes);
  const rowColumns=new Map();model.assignments.forEach((map,i)=>{for(const placement of map.values()){const columns=rowColumns.get(placement.row)||new Set();columns.add(i);rowColumns.set(placement.row,columns);}});
@@ -59,12 +59,12 @@ export function alignArticleRows(panes,model){
   entries.forEach((entry,i)=>{if(!entry)return;const gap=Math.max(0,top-entry.start-added[i]);writes.push([entry.node,gap]);added[i]+=gap;});cursor=top+Math.max(0,...entries.map(e=>e?.height||0));
  }
  for(const [node,gap] of writes)if(gap>.1)node.style.marginTop=`${gap}px`;
- const sizes=panes.map(pane=>pane?.clientHeight?{pane,height:pane.scrollHeight,padding:parseFloat(getComputedStyle(pane).paddingBottom)}:null),end=Math.max(0,...sizes.map(s=>s?.height||0));
- for(const size of sizes)if(size)size.pane.style.paddingBottom=`${size.padding+end-size.height}px`;
+ const sizes=panes.map(pane=>pane?.clientHeight?{pane,height:pane.scrollHeight}:null),end=Math.max(0,...sizes.map(s=>s?.height||0));
+ for(const size of sizes)if(size)size.pane.style.setProperty('--alignment-tail',`${end-size.height}px`);
 }
 
 export function detailedUnits(law){
- const units=[];function visit(el,article){if(el.tag==='Article')article=el; if(['Article','Paragraph','Item'].includes(el.tag))units.push({el,article});for(const c of el.children||[])if(typeof c!=='string')visit(c,article);}for(const article of mainArticles(law))visit(article,article);return units;
+ const units=[];function visit(el,article){if(el.tag==='Article')article=el; if((['Article','Paragraph','Item'].includes(el.tag)||subitemLevel(el.tag)>0))units.push({el,article});for(const c of el.children||[])if(typeof c!=='string')visit(c,article);}for(const article of mainArticles(law))visit(article,article);return units;
 }
 // Keep the largest order-consistent set of article anchors. An isolated future
 // cross-reference cannot advance the placement cursor for every following article.
@@ -75,7 +75,7 @@ export function monotoneAnchorIndices(values){
 }
 export function buildDetailedAlignment(laws){
  const units=laws.map(detailedUnits),maps=units.map(()=>new Map()),rows=[];
- const articleLists=laws.map(mainArticles),articleNumbers=articleLists.map(list=>new Map(list.map(a=>[a.attr.Num,a])));
+ const articleLists=laws.map(mainArticles),articleNumbers=articleLists.map(list=>new Map(list.map(article=>[article.attr.Num,article])));
  const addAfter=previous=>{const row={};rows.splice(previous?rows.indexOf(previous)+1:0,0,row);return row;};
  for(const unit of units[0]){const heading=unit.el.tag==='Paragraph'&&unit.el===unit.article.children.find(c=>c.tag==='Paragraph')?maps[0].get(unit.article.readerNode)?.row:null;const row=heading||{};if(!heading)rows.push(row);maps[0].set(unit.el.readerNode,{row,status:'root'});}
  for(let level=1;level<3;level++){
@@ -83,15 +83,12 @@ export function buildDetailedAlignment(laws){
   function add(el,row){if(!el||!row)return;const refs=refsByUnit.get(el)||[];if(!refs.includes(row))refs.push(row);refsByUnit.set(el,refs);}
   for(const env of laws[level]?.analysis.pointerEnvByEL.values()||[]){
    const container=env.sentenceEnv.container,article=container.thisOrClosest(c=>c.el.tag==='Article')?.el;if(!article)continue;
-   const paragraph=container.thisOrClosest(c=>c.el.tag==='Paragraph')?.el,item=container.thisOrClosest(c=>c.el.tag==='Item')?.el;
+   const paragraph=container.thisOrClosest(c=>c.el.tag==='Paragraph')?.el,item=container.thisOrClosest(c=>c.el.tag==='Item'||subitemLevel(c.el.tag)>0)?.el;
    const target=externalTargets(env).filter(t=>t.target).at(-1)?.target;if(!target?.article)continue;
    const parentLevel=laws.findIndex(l=>l?.num===target.lawNum);if(parentLevel<0||parentLevel>=level)continue;
    const parentArticle=articleNumbers[parentLevel].get(target.article);if(!parentArticle)continue;
-   function find(node,tag,num){if(node.tag===tag&&node.attr.Num===num)return node;for(const c of node.children||[])if(typeof c!=='string'){const found=find(c,tag,num);if(found)return found;}return null;}
-   const parentParagraph=target.paragraph?find(parentArticle,'Paragraph',target.paragraph):null;
-   const parentItem=target.item?find(parentParagraph||parentArticle,'Item',target.item):null;
-   if(target.paragraph&&!parentParagraph||target.item&&!parentItem)continue;
-   const row=maps[parentLevel].get((parentItem||parentParagraph||parentArticle).readerNode)?.row;
+   const parent=findTarget(laws[parentLevel],target,parentArticle)?.el;if(!parent)continue;
+   const row=maps[parentLevel].get(parent.readerNode)?.row;
    if(isFirstParagraphReference(env,article)&&!item)add(article,row);
    if(item)add(item,row);else add(paragraph,row);
   }

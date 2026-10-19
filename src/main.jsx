@@ -5,7 +5,7 @@ import {htmlCSS} from 'lawtext/dist/src/renderer/rules/htmlCSS.js';
 import {xmlToEL} from 'lawtext/dist/src/node/el/xmlToEL.js';
 import {analyze} from 'lawtext/dist/src/analyzer/index.js';
 import {HTMLAnyELs} from 'lawtext/dist/src/renderer/rules/any.js';
-import {externalTargets,internalTargets,findTarget,buildBacklinks,delegationCandidates,delegationWords} from './references.js';
+import {externalTargets,internalTargets,findTarget,buildBacklinks,delegationCandidates,delegationWords,subitemLevel} from './references.js';
 import {chooseReadingSection,selectCompanion} from './reading.js';
 import {isAvailableLaw} from './catalog.js';
 import LawCatalog from './LawCatalog.jsx';
@@ -70,16 +70,17 @@ function Wrap({htmlComponentID,childProps,ChildComponent}){
    if(typeof part!=='string')return <ChildComponent key={k} {...childProps} els={[part]}/>;
    const pieces=[];let offset=0;
    for(const match of part.matchAll(delegationWords)){
-    pieces.push(part.slice(offset,match.index));const candidates=delegationCandidates(options.backlinks,{article:options.article,paragraph:options.paragraph,item:options.item,index:options.index},match[0]);
+    pieces.push(part.slice(offset,match.index));const candidates=delegationCandidates(options.backlinks,{article:options.article,paragraph:options.paragraph,item:options.item,subitems:options.subitems,index:options.index},match[0]);
     pieces.push(candidates.length?<ReferenceButton options={options} preview={anchor=>options.previewDelegation(candidates,match[0],options.index,anchor)} className={`reference ref-cross delegation-reference ref-${['act','order','rule'][candidates[0]?.sourceIndex]||'external'}`} key={`${k}-${match.index}`} title="この条項を参照する下位法令を表示" onClick={e=>options.onDelegation(candidates,match[0],options.index,e.currentTarget)}>{match[0]}</ReferenceButton>:match[0]);offset=match.index+match[0].length;
    }
    pieces.push(part.slice(offset));return <React.Fragment key={k}>{pieces}</React.Fragment>;
   });return <>{parts}</>;
  }
  let nestedOptions=options;
- if(htmlComponentID==='HTMLArticle')nestedOptions={...options,article:el.readerKey,paragraph:undefined,item:undefined};
- if(htmlComponentID==='HTMLParagraphItem'&&el.tag==='Paragraph')nestedOptions={...options,paragraph:el.attr.Num,item:undefined};
- if(htmlComponentID==='HTMLParagraphItem'&&el.tag==='Item')nestedOptions={...options,item:el.attr.Num};
+ if(htmlComponentID==='HTMLArticle')nestedOptions={...options,article:el.readerKey,paragraph:undefined,item:undefined,subitems:[]};
+ if(htmlComponentID==='HTMLParagraphItem'&&el.tag==='Paragraph')nestedOptions={...options,paragraph:el.attr.Num,item:undefined,subitems:[]};
+ if(htmlComponentID==='HTMLParagraphItem'&&el.tag==='Item')nestedOptions={...options,item:el.attr.Num,subitems:[]};
+ if(htmlComponentID==='HTMLParagraphItem'&&subitemLevel(el.tag))nestedOptions={...options,subitems:[...(options.subitems||[]).slice(0,subitemLevel(el.tag)-1),el.attr.Num]};
  const rendered=<ChildComponent {...childProps} htmlOptions={{...htmlOptions,options:nestedOptions}}/>;
  if(htmlComponentID==='HTMLArticle'){
   const refs=options.backlinks?.get(el.readerKey)||[];

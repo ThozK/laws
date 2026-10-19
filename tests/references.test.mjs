@@ -143,3 +143,38 @@ test('条番号の距離では制限せず、単調に続く大きな跳びは�
  assert.deepEqual([...monotoneAnchorIndices([2,150,80,81,200])].sort((a,b)=>a-b),[0,2,3,4]);
  assert.deepEqual([...monotoneAnchorIndices([2,2,80,80,150])].sort((a,b)=>a-b),[0,1,2,3,4]);
 });
+
+
+test('号の細分まで外部参照を解析し、別の号の同名細分と混同しない',()=>{
+ const fragment=(targetType,num,name)=>({tag:'____PF',attr:{targetType,num,name},text:()=>name});
+ const env={located:{type:'external',lawRef:{attr:{lawNum:laws[0].num}},fqPrefixFragments:[],skipSameCount:0},pointer:{children:[fragment('Article','78','第七十八条'),fragment('Paragraph','1','第一項'),fragment('Item','7','第七号'),fragment('SUBITEM','1','イ')]}};
+ const targets=externalTargets(env),target=targets.at(-1).target;
+ assert.deepEqual(target.subitems,['1']);assert.equal(targets[2].target.subitems,undefined);
+ const found=findTarget(laws[0],target);assert.equal(found.el.tag,'Subitem1');assert.match(found.el.text(),/^イ独立行政法人等/);
+ assert.match(noteContext(laws[0],found.el),/第七十八条.*第1項.*第7号.*イ/);
+ assert.equal(findTarget(laws[0],{...target,subitems:['99']}),null);
+});
+test('細分の多階層を保持し、三段表でも全細分を一度ずつ順番に配置する',()=>{
+ const fragment=(targetType,num)=>({tag:'____PF',attr:{targetType,num},text:()=>num});
+ const env={located:{type:'external',lawRef:{attr:{lawNum:laws[0].num}},fqPrefixFragments:[],skipSameCount:0},pointer:{children:[fragment('Article','2'),fragment('Paragraph','1'),fragment('Item','1'),fragment('SUBITEM','1'),fragment('SUBITEM','2')]}};
+ const targets=externalTargets(env);assert.deepEqual(targets.at(-1).target.subitems,['1','2']);assert.deepEqual(targets.at(-2).target.subitems,['1']);
+ const model=buildDetailedAlignment(laws);
+ model.articles.forEach((units,i)=>{assert.ok(units.some(el=>el.tag==='Subitem1'));assert.equal(model.assignments[i].size,units.length);let previous=-1;for(const unit of units){const row=model.assignments[i].get(unit.readerNode).row;assert.ok(row>=previous);previous=row;}});
+});
+test('委任先の細分イ・ロは区別し、該当細分の参照を優先する',()=>{
+ const entry=(key,subitems)=>({key,sourceIndex:2,relations:[{target:{paragraph:'1',item:'1',subitems},node:key,defining:true}]});
+ const map=new Map([['a',[entry('i',['1']),entry('ro',['2'])]]]);
+ assert.deepEqual(delegationCandidates(map,{article:'a',paragraph:'1',item:'1',subitems:['2'],index:0},'環境省令').map(r=>r.key),['ro']);
+ assert.equal(delegationCandidates(map,{article:'a',paragraph:'1',item:'1',index:0},'環境省令').length,0);
+});
+
+test('下位条文の参照先が細分イなら号全体ではなくイの行に対応づける',()=>{
+ const paragraph={tag:'Paragraph',attr:{Num:'1'},readerNode:'source-p',children:[]};
+ const article={tag:'Article',attr:{Num:'1'},readerKey:'source-a',readerNode:'source-a',children:[paragraph]};
+ const fragment=(targetType,num)=>({tag:'____PF',attr:{targetType,num},text:()=>num});
+ const env={sentenceEnv:{container:{thisOrClosest:fn=>[paragraph,article].map(el=>({el})).find(fn)}},pointer:{children:[fragment('Article','78'),fragment('Paragraph','1'),fragment('Item','7'),fragment('SUBITEM','1')]},located:{type:'external',lawRef:{attr:{lawNum:laws[0].num}},fqPrefixFragments:[],skipSameCount:0}};
+ const source={num:'test-order',el:{children:[{tag:'LawBody',children:[{tag:'MainProvision',children:[article]}]}]},analysis:{pointerEnvByEL:new Map([[1,env]])}};
+ const model=buildDetailedAlignment([laws[0],source,null]);
+ const target=findTarget(laws[0],{article:'78',paragraph:'1',item:'7',subitems:['1']}).el;
+ assert.equal(model.assignments[0].get(target.readerNode).row,model.assignments[1].get(article.readerNode).row);
+});
