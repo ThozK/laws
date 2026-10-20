@@ -1,8 +1,14 @@
 # 三段法令ビューア
 
 法・施行令・施行規則を３列に並べて読み易くした法律ビュアーのウェブサイトです。
+
 デジタル庁が提供する法令APIを利用し、法令閲覧の先駆的OSSであるLawtextをベースに作成しています、
+
 https://thozk.github.io/laws/
+
+<img width="1012" height="691" alt="スクリーンショット 2026-10-20 23 17 57" src="https://github.com/user-attachments/assets/5329af2c-8671-4205-be48-f24e9a653aea" />
+
+
 
 # 作成の動機
 
