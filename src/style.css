@@ -89,3 +89,6 @@ html,body,#root{height:100%;overflow:hidden}
 
 .reader .reference-target-highlight{background-color:#ffe48a80;box-shadow:inset 3px 0 #d9a92e}
 .delegation-choices button:hover,.delegation-choices button:focus-visible{background:#ffedaa}
+
+.header{height:auto;min-height:90px;gap:12px;padding-top:12px;padding-bottom:12px}.header-actions{gap:8px;flex-wrap:wrap;justify-content:flex-end}.brand{flex-shrink:0}.export-options{display:grid;gap:12px}.dialog>p{font-size:13px;line-height:1.8}
+@media(max-width:900px){.header{flex-wrap:wrap}.header-actions{justify-content:flex-start}}

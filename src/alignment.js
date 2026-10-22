@@ -30,7 +30,7 @@ export function buildAlignment(laws){
  }
  return {articles,assignments};
 }
-export function clearAlignment(panes){for(const pane of panes)if(pane)pane.style.removeProperty('--alignment-tail');for(const pane of panes)for(const section of pane?.querySelectorAll('[data-alignment-row]')||[]){section.style.marginTop='';delete section.dataset.alignmentRow;delete section.dataset.alignmentStatus;}}
+export function clearAlignment(panes){for(const pane of panes)for(const el of pane?.querySelectorAll('[data-alignment-gap]')||[]){el.style.marginTop='';delete el.dataset.alignmentGap;}for(const pane of panes)if(pane)pane.style.removeProperty('--alignment-tail');for(const pane of panes)for(const section of pane?.querySelectorAll('[data-alignment-row]')||[]){section.style.marginTop='';delete section.dataset.alignmentRow;delete section.dataset.alignmentStatus;}}
 export function alignArticleRows(panes,model){
  clearAlignment(panes);
  const rowColumns=new Map();model.assignments.forEach((map,i)=>{for(const placement of map.values()){const columns=rowColumns.get(placement.row)||new Set();columns.add(i);rowColumns.set(placement.row,columns);}});
@@ -58,7 +58,7 @@ export function alignArticleRows(panes,model){
  for(const row of rowIds){const entries=measured.map(g=>g.get(row)),top=Math.max(cursor,...entries.map((e,i)=>e?e.start+added[i]:0));
   entries.forEach((entry,i)=>{if(!entry)return;const gap=Math.max(0,top-entry.start-added[i]);writes.push([entry.node,gap]);added[i]+=gap;});cursor=top+Math.max(0,...entries.map(e=>e?.height||0));
  }
- for(const [node,gap] of writes)if(gap>.1)node.style.marginTop=`${gap}px`;
+ for(const [node,gap] of writes)if(gap>.1){let spacing=node;if(node.matches('section[data-article]')){for(let parent=node.parentElement;parent&&parent!==node.closest('.reader');parent=parent.parentElement)if(parent.dataset.groupFirst===node.dataset.article)spacing=parent;}spacing.dataset.alignmentGap='true';spacing.style.marginTop=`${gap}px`;}
  const sizes=panes.map(pane=>pane?.clientHeight?{pane,height:pane.scrollHeight}:null),end=Math.max(0,...sizes.map(s=>s?.height||0));
  for(const size of sizes)if(size)size.pane.style.setProperty('--alignment-tail',`${end-size.height}px`);
 }

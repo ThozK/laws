@@ -1,8 +1,10 @@
+import {resolveLawReferences} from './resolveReferences.js';
 import {parseNamedNum} from 'lawtext/dist/src/law/num.js';
 
 export function subitemLevel(tag){const match=/^Subitem([1-9]|10)$/.exec(tag||'');return match?Number(match[1]):0;}
 
 export function externalTargets(env){
+ if(env.readerTargets)return env.readerTargets;
  const loc=env.located;if(loc?.type!=='external')return [];
  const lawNum=loc.lawRef.attr.lawNum;if(!lawNum)return [];
  const state={lawNum,title:loc.lawRef.attr.suggestedLawTitle};let supported=true;
@@ -25,7 +27,7 @@ export function externalTargets(env){
  });
 }
 export function internalTargets(env){
- if(env.located?.type!=='internal')return [];
+ if(env.readerTargets||env.located?.type!=='internal')return [];
  return env.pointer.children.map(f=>{
   const containers=env.located.fragments.find(x=>x.fragment===f)?.containers||[];
   return {text:f.text?.()||String(f),target:containers.length?{node:containers[0].el.readerNode,nodes:containers.map(c=>c.el.readerNode),article:containers[0].thisOrClosest(c=>c.el.tag==='Article')?.el.readerKey,count:containers.length}:null};
@@ -46,6 +48,7 @@ export function findTarget(law,target,indexedArticle){
  return {el:content,articleKey:article.readerKey,article};
 }
 export function buildBacklinks(laws){
+ laws.forEach(law=>{if(law)resolveLawReferences(law,laws);});
  const maps=laws.map(()=>new Map());
  laws.forEach((source,sourceIndex)=>{
   if(!source?.analysis)return;
