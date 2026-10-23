@@ -1,0 +1,38 @@
+/* Phone-only layout; desktop styling is intentionally unchanged. */
+@media(max-width:700px){
+ .app{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+ .header{padding:8px 12px 9px;gap:8px;min-height:0;display:block}
+ .brand{gap:8px;min-height:42px}.brand h1{font-size:16px;letter-spacing:0;margin-bottom:3px}.brand p{font-size:10px}
+ .brand .brand-mark{width:36px;height:36px}.brand-mark svg{width:36px;height:34px}
+ .header-actions{margin-top:7px;display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;max-width:100%;padding:2px 1px 5px;scrollbar-width:thin;overscroll-behavior-x:contain}
+ .header-actions>button,.header-actions .font-control{flex-shrink:0}.header-actions>button,.font-control button{min-height:42px;padding:8px 11px;font-size:12px;white-space:nowrap}
+ .header-actions .theme-toggle{width:42px;height:42px;margin-left:0}.font-control{gap:4px}
+ .mobile-tabs{padding:5px 10px 8px;gap:6px}.mobile-tabs button{min-height:42px;font-size:13px;border-radius:9px;border-top:3px solid var(--gg-act)}.mobile-tabs button:nth-child(2){border-top-color:var(--gg-order)}.mobile-tabs button:nth-child(3){border-top-color:var(--gg-rule)}
+ .columns{padding:0 10px;gap:10px}.aligned-columns{display:flex!important;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:10px;scrollbar-width:none}.aligned-columns::-webkit-scrollbar{display:none}
+ .aligned-columns .column{flex:0 0 calc(100vw - 20px);width:calc(100vw - 20px);scroll-snap-align:start;scroll-snap-stop:always}
+ .column-width-toggle{display:none}.column-header{padding:10px 12px;min-height:0}.column-header h3{font-size:14px;line-height:1.5;margin:0 0 5px}.law-number{font-size:10px;margin-bottom:5px}.law-date{margin-left:6px}
+ .jump-label{margin-top:5px;gap:6px;font-size:10px}.jump-label select{min-height:40px;font-size:16px;padding:6px}.reading-back{min-height:40px;white-space:nowrap;padding:6px 8px}
+ .reader,.aligned-columns .reader{padding:18px 15px 45px;font-size:var(--reader-font);line-height:1.85;-webkit-overflow-scrolling:touch}.reader .law-title{font-size:1.05em}.column-footer{padding:6px 12px;font-size:10px}
+ .footer{padding:4px 12px;gap:2px;font-size:8px;line-height:1.5;flex-wrap:nowrap;justify-content:space-between}.footer span{min-width:0}.notice{margin:3px 12px 0;font-size:11px}
+ .overlay{padding:10px}.dialog{width:100%;max-height:calc(100dvh - 24px);padding:18px 14px;border-radius:14px}.dialog-heading{margin-bottom:14px}.dialog-heading h2{font-size:18px}.dialog-heading>button,.note-heading>button{min-width:40px;min-height:40px;padding:5px}
+ .dialog input,.dialog select{font-size:16px!important;min-height:44px}.search-row{gap:6px}.search-row button{min-width:60px}.selection-targets{gap:4px}.selection-targets button{min-height:44px;padding:6px 3px}.selection-modes button{min-height:44px;padding:6px}.result{padding:12px;min-height:48px}.catalog-rows{max-height:40dvh}
+ .reference-note{max-width:calc(100vw - 24px);border-radius:12px;padding:14px}.note-body{font-size:16px;line-height:1.85}.note-heading{gap:6px}.reference-note .note-heading h3{font-size:13px}.note-jump,.note-open-law,.note-source{min-height:38px;display:inline-flex;align-items:center}.delegation-choices button{min-height:44px;padding:10px;text-align:left}
+}
+@media(max-width:360px){.brand h1{font-size:14px}.jump-label{font-size:0}.jump-label select,.jump-label button{font-size:13px}.footer{font-size:7px}}
+/* スマホでは本文の縦方向の領域を優先。 */
+@media(max-width:700px){
+ .header{padding:5px 10px 4px}
+ .brand{min-height:29px;gap:6px}.brand h1{font-size:14px;margin:0}.brand p{display:none}
+ .brand .brand-mark{width:28px;height:28px}.brand-mark svg{width:28px;height:27px}
+ .header-actions{margin-top:3px;padding:1px 0 3px;gap:5px;scrollbar-width:none}.header-actions::-webkit-scrollbar{display:none}
+ .header-actions>button,.font-control button{min-height:34px;padding:6px 9px;font-size:11px;border-radius:8px}.header-actions .theme-toggle{width:34px;height:34px;min-height:34px}
+ .mobile-tabs{padding:3px 10px 5px;gap:5px}.mobile-tabs button{min-height:34px;padding:5px;font-size:12px;border-radius:7px}
+ .column-header{padding:7px 10px}
+ .column-header h3{font-size:12px;line-height:1.4;margin:0 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .law-number{display:none}
+ .jump-label{margin:0;gap:5px;font-size:0}
+ .jump-label select{min-height:32px;height:32px;padding:3px 5px;font-size:16px}
+ .jump-label .reading-back{min-height:32px;height:32px;padding:3px 7px;font-size:11px}
+ .reader,.aligned-columns .reader{padding-top:12px;padding-bottom:32px}
+ .column-footer,.app>.footer{display:none}
+}
