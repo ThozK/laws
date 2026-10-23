@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {openPdf} from '../src/exportPdf.js';
+const law={id:'test',title:'試験法',num:'令和元年法律第一号',el:{children:[]},analysis:{pointerEnvByEL:new Map()}};
+function storage(){const data=new Map();return {setItem:(k,v)=>data.set(k,v),getItem:k=>data.get(k),removeItem:k=>data.delete(k)};}
+test('PDFはGitHub Pagesの配置先でも別ウィンドウを開き、文書を渡す',()=>{const cache=storage();let called,cleanup;openPdf([law,null,null],{baseURL:'/laws/',storage:cache,openWindow:(...args)=>{called=args;assert.match(cache.getItem('sandan-pdf-document'),/試験法/);return {};},schedule:fn=>cleanup=fn});assert.equal(called[0],'/laws/pdf-preview.html');assert.equal(called[1],'_blank');assert.match(called[2],/popup/);cleanup();assert.equal(cache.getItem('sandan-pdf-document'),undefined);});
+test('ポップアップが拒否された場合は生成データを残さずエラーを伝える',()=>{const cache=storage();assert.throws(()=>openPdf([law,null,null],{baseURL:'/',storage:cache,openWindow:()=>null}),/ポップアップ/);assert.equal(cache.getItem('sandan-pdf-document'),undefined);});

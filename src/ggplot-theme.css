@@ -1,0 +1,56 @@
+/* ggplot2-style hue accents on neutral theme_grey surfaces. */
+:root{--gg-act:#F8766D;--gg-order:#00BA38;--gg-rule:#619CFF;--gg-other:#C77CFF;--gg-ink:#303030;--gg-muted:#666;--gg-panel:#EBEBEB;color:var(--gg-ink);background:var(--gg-panel)}
+body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);border-color:#ccc}button:hover{background:#f0f0f0}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.reader:focus-visible{outline-color:var(--gg-rule)}
+.header{background:#fff;color:var(--gg-ink);border-bottom:1px solid #d5d5d5;gap:20px;min-height:90px;height:auto;padding-block:16px;flex-wrap:wrap}.brand-mark{border-color:#8c8c8c;background:#f5f5f5}.brand h1{letter-spacing:.045em;font-size:20px}.brand p{color:#686868;letter-spacing:.04em}.header-actions{gap:8px;flex-wrap:wrap}.header button{background:#fff;color:#333;border-color:#c8c8c8}.header button:hover{background:#eee}.header-actions>button[aria-pressed=true]{background:#3d3d3d;border-color:#3d3d3d;color:#fff}
+.columns{gap:12px}.column{border-color:white;background:white}.column-header{background:#f5f5f5;border-color:#ddd}.law-number,.law-date,.jump-label,.column-footer,.column-footer a{color:#686868}.jump-label select{border-color:#ccc;color:#333}.column-footer{border-color:#ddd}
+.column-width-toggle,.column-width-toggle:hover{background:var(--gg-act);--strip-color:var(--gg-act);color:#252525}.col-1 .column-width-toggle{background:var(--gg-order);--strip-color:var(--gg-order)}.col-2 .column-width-toggle{background:var(--gg-rule);--strip-color:var(--gg-rule)}.column-width-toggle:hover{filter:brightness(1.05)}
+.reader{scrollbar-color:#bcbcbc #f5f5f5}.reader .law-num,.reader .article-caption{color:#4d4d4d}.reader .article-group-title{background:#ebebeb;border-bottom:1px solid white}.reader .ref-act{--reference-mark:#F8766D55}.reader .ref-order{--reference-mark:#00BA3855}.reader .ref-rule{--reference-mark:#619CFF55}.reader .reference:hover,.reader .reference:focus-visible,.note-body .reference{ text-decoration-color:#606060}.reader .reference-target-highlight{background-color:#619CFF30;box-shadow:inset 3px 0 var(--gg-rule)}
+.backlinks{background:#f1f1f1;border-left-color:#aaa}.backlinks>span,.backlinks button,.eyebrow,.catalog-help,.catalog-summary,.bundle-review p,.dialog-note,.notice,.footer,.empty-law,.result span,.related-toolbar,.related-unverified{color:var(--gg-muted)}.github-profile,.github-profile:hover{color:#4d4d4d}.result .relation-badge{color:#3972b8}.result .relation-basis{color:#666}
+.overlay{background:#20202080}.dialog{color:#303030}.primary,.selection-modes button[aria-pressed=true],.selection-targets button[aria-pressed=true],.mobile-tabs button[aria-pressed=true]{background:#3d3d3d;border-color:#3d3d3d;color:#fff}.primary:hover{background:#555}.search-row input,.catalog-filters select,.catalog-filters input,.bundle-review select,.related-filter input{border-color:#ccc}.default-choice{border-color:#ddd}.spinner{border-color:#ddd;border-top-color:var(--gg-rule)}
+.reference-note{background:#fff8f3;border-color:#edbbb6;border-top-color:var(--gg-act);box-shadow:0 9px 35px #0003}.reference-note .note-heading h3,.note-location,.note-source,.note-heading button{color:#555}.note-body .reference{background:#F8766D18}.note-body .reference:hover{background:#F8766D44}.reference-note:focus-within{outline-color:#aaa}.note-excerpt+.note-excerpt{border-color:#ddd}.reference-note.candidate-popup{background:white;border-top-color:var(--gg-rule);box-shadow:0 10px 40px #0003}.candidate-popup .note-heading h3{color:#444}.candidate-popup .delegation-choices button{background:#f1f1f1;border-color:#ccc}.delegation-choices button:hover,.delegation-choices button:focus-visible{background:#619CFF22}.egov-attachment{color:#3972b8}
+@media(hover:none){.reader .reference{text-decoration-color:#606060}}
+@media(max-width:700px){.header{gap:12px;padding:13px 15px}.brand h1{font-size:17px}.brand p{font-size:10px}.header-actions{gap:6px}.header-actions>button{padding:8px 10px;font-size:11px}.columns{gap:8px}}
+
+/* 北斗七星のホームリンク */
+.brand .brand-mark{flex-shrink:0;width:52px;height:48px;padding:0;border:0;border-radius:6px;background:transparent;color:#444;text-decoration:none}.brand-mark svg{width:50px;height:45px;display:block}.brand .brand-mark:hover{background:#ebebeb;color:#111}
+
+/* 読書用ダークモード。法令の役割を示す3色は維持する。 */
+:root[data-theme="dark"]{color-scheme:dark;--gg-ink:#e5e7eb;--gg-muted:#adb4bf;--gg-panel:#181b20;color:var(--gg-ink);background:var(--gg-panel)}
+[data-theme="dark"] .header,[data-theme="dark"] .column,[data-theme="dark"] .dialog{background:#22262d;color:var(--gg-ink);border-color:#414751}
+[data-theme="dark"] .column-header,[data-theme="dark"] .column-footer{background:#292e36;border-color:#414751}
+[data-theme="dark"] button,[data-theme="dark"] input,[data-theme="dark"] select{background:#303640;color:var(--gg-ink);border-color:#535b67}
+[data-theme="dark"] button:hover{background:#414956}
+[data-theme="dark"] .header-actions>button[aria-pressed=true],[data-theme="dark"] .primary,[data-theme="dark"] .selection-modes button[aria-pressed=true],[data-theme="dark"] .selection-targets button[aria-pressed=true],[data-theme="dark"] .mobile-tabs button[aria-pressed=true]{background:#526a8d;color:#fff;border-color:#7593bf}
+[data-theme="dark"] .brand .brand-mark{color:#e5e7eb;background:transparent}[data-theme="dark"] .brand-mark circle{fill:#22262d}[data-theme="dark"] .brand .brand-mark:hover{background:#373e49}
+[data-theme="dark"] .brand p,[data-theme="dark"] .law-number,[data-theme="dark"] .law-date,[data-theme="dark"] .jump-label,[data-theme="dark"] .column-footer,[data-theme="dark"] .column-footer a,[data-theme="dark"] .reader .law-num,[data-theme="dark"] .reader .article-caption{color:#b9c1cc}
+[data-theme="dark"] .reader{background:#22262d;color:#e5e7eb;scrollbar-color:#58616f #22262d}
+[data-theme="dark"] .reader .article-group-title,[data-theme="dark"] .backlinks{background:#303640;color:#e5e7eb;border-color:#535b67}
+[data-theme="dark"] .reference-note{background:#302a29;color:#e5e7eb;border-color:#8b5c57;border-top-color:var(--gg-act)}
+[data-theme="dark"] .reference-note.candidate-popup{background:#292e36;border-color:#536987;border-top-color:var(--gg-rule)}
+[data-theme="dark"] .reference-note .note-heading h3,[data-theme="dark"] .note-location,[data-theme="dark"] .note-source,[data-theme="dark"] .note-heading button,[data-theme="dark"] .github-profile{color:#d3d9e2}
+[data-theme="dark"] .reader .reference:hover,[data-theme="dark"] .reader .reference:focus-visible,[data-theme="dark"] .note-body .reference{text-decoration-color:#c1c9d4}
+[data-theme="dark"] .egov-attachment,[data-theme="dark"] .result .relation-badge{color:#93bdff}
+[data-theme="dark"] .result,[data-theme="dark"] .default-choice,[data-theme="dark"] .note-excerpt+.note-excerpt{border-color:#454d59}
+[data-theme="dark"] .result .relation-basis{color:var(--gg-muted)}
+[data-theme="dark"] .overlay{background:#0009}
+@media(hover:none){[data-theme="dark"] .reader .reference{text-decoration-color:#c1c9d4}}
+[data-theme="dark"] .column-width-toggle{background:var(--gg-act);color:#202124;border-color:transparent}[data-theme="dark"] .col-1 .column-width-toggle{background:var(--gg-order);color:#202124}[data-theme="dark"] .col-2 .column-width-toggle{background:var(--gg-rule);color:#202124}
+/* 暗い背景では対応行の区切りを本文より控えめにする。 */
+[data-theme="dark"] .detail-aligned div[data-alignment-row]{border-top-color:#ffffff12}
+[data-theme="dark"] .aligned-columns section[data-alignment-row]{border-top-color:#ffffff1c}
+
+/* モニター上の長文閲覧用。PDFの明朝体指定には影響させない。 */
+:root{--reading-font:'BIZ UDPGothic','BIZ UDGothic','Hiragino Kaku Gothic ProN','Yu Gothic UI',Meiryo,sans-serif}
+.reader,.note-body{font-family:var(--reading-font);font-weight:400;line-height:1.9;letter-spacing:.015em;-webkit-font-smoothing:auto}
+.reader .law-title,.reader .article-caption{font-weight:700}
+
+/* ガラス調の操作ボタン */
+.header-actions button{border-radius:11px;background:linear-gradient(145deg,#ffffffc9,#e9edf575);border:1px solid #ffffffde;box-shadow:0 3px 10px #25344a12,inset 0 1px 0 #fff;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:background .18s,box-shadow .18s,transform .18s}
+.header-actions button:hover{background:linear-gradient(145deg,#ffffffed,#dde7f4b3);box-shadow:0 5px 14px #25344a20,inset 0 1px 0 #fff;transform:translateY(-1px)}
+.header-actions button:active{transform:translateY(0)}
+.header-actions>button[aria-pressed=true]{background:linear-gradient(145deg,#61799ac9,#3f536fc9);border-color:#ffffff70;box-shadow:0 3px 12px #25344a26,inset 0 1px 0 #ffffff50;color:#fff}
+.header-actions .theme-toggle{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;padding:0;margin-left:4px}
+[data-theme="dark"] .header-actions button{background:linear-gradient(145deg,#626e8059,#30394780);border-color:#ffffff26;box-shadow:0 3px 12px #0003,inset 0 1px 0 #ffffff20;color:#e5e7eb}
+[data-theme="dark"] .header-actions button:hover{background:linear-gradient(145deg,#8294b070,#46556b99);box-shadow:0 5px 14px #0004,inset 0 1px 0 #ffffff30}
+[data-theme="dark"] .header-actions>button[aria-pressed=true]{background:linear-gradient(145deg,#7896c380,#465e8699);border-color:#a6c7ff66;color:#fff}
+@media(prefers-reduced-motion:reduce){.header-actions button{transition:none}.header-actions button:hover{transform:none}}

@@ -1,0 +1,586 @@
+{
+  "version": 1,
+  "parent": {
+    "law_info": {
+      "law_id": "347AC0000000057",
+      "law_num": "昭和四十七年法律第五十七号",
+      "law_type": "Act"
+    },
+    "revision_info": {
+      "law_title": "労働安全衛生法",
+      "law_title_kana": "ろうどうあんぜんえいせいほう",
+      "law_revision_id": "347AC0000000057_20261001_507AC0000000033",
+      "amendment_enforcement_date": "2026-10-01",
+      "repeal_status": "None",
+      "current_revision_status": "CurrentEnforced"
+    }
+  },
+  "generated_at": "2026-10-23T14:36:14.736Z",
+  "laws": [
+    {
+      "law_info": {
+        "law_id": "347CO0000000345",
+        "law_num": "昭和四十七年政令第三百四十五号",
+        "law_type": "CabinetOrder"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法関係手数料令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうかんけいてすうりょうれい",
+        "law_revision_id": "347CO0000000345_20260401_507CO0000000361",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "内閣は、労働安全衛生法（昭和四十七年法律第五十七号）第百十二条の規定に基づき、この政令を制定する。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347CO0000000318",
+        "law_num": "昭和四十七年政令第三百十八号",
+        "law_type": "CabinetOrder"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法施行令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうしこうれい",
+        "law_revision_id": "347CO0000000318_20261001_508CO0000000196",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "内閣は、労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、この政令を制定する。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "417M60000100021",
+        "law_num": "平成十七年厚生労働省令第二十一号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "石綿障害予防規則",
+        "law_title_kana": "いしわたしょうがいよぼうきそく",
+        "law_revision_id": "417M60000100021_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、石綿障害予防規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000047",
+        "law_num": "昭和四十七年労働省令第四十七号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "沖縄県の区域における労働安全衛生法及びこれに基づく命令の適用の特別措置等に関する省令",
+        "law_title_kana": "おきなわけんのくいきにおけるろうどうあんぜんえいせいほうおよびこれにもとづくめいれいのてきようのとくべつそちとうにかんするしょうれい",
+        "law_revision_id": "347M50002000047_20040331_415M60000100175",
+        "amendment_enforcement_date": "2004-03-31",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法施行令（昭和四十七年政令第三百十八号）附則第十四条の規定に基づき、沖縄県の区域における労働安全衛生法及びこれに基づく命令の適用の特別措置等に関する省令を次のように定める。",
+        "parent_id": "347CO0000000318",
+        "parent_title": "労働安全衛生法施行令"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000045",
+        "law_num": "昭和四十七年労働省令第四十五号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "機械等検定規則",
+        "law_title_kana": "きかいとうけんていきそく",
+        "law_revision_id": "347M50002000045_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、機械等検定規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000034",
+        "law_num": "昭和四十七年労働省令第三十四号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "クレーン等安全規則",
+        "law_title_kana": "くれーんとうあんぜんきそく",
+        "law_revision_id": "347M50002000034_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、クレーン等安全規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000040",
+        "law_num": "昭和四十七年労働省令第四十号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "高気圧作業安全衛生規則",
+        "law_title_kana": "こうきあつさぎょうあんぜんえいせいきそく",
+        "law_revision_id": "347M50002000040_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、高気圧障害防止規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000035",
+        "law_num": "昭和四十七年労働省令第三十五号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "ゴンドラ安全規則",
+        "law_title_kana": "ごんどらあんぜんきそく",
+        "law_revision_id": "347M50002000035_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、ゴンドラ安全規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000046",
+        "law_num": "昭和四十七年労働省令第四十六号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "産業安全専門官及び労働衛生専門官規程",
+        "law_title_kana": "さんぎょうあんぜんせんもんかんおよびろうどうえいせいせんもんかんきてい",
+        "law_revision_id": "347M50002000046_20190507_501M60000100001",
+        "amendment_enforcement_date": "2019-05-07",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）第九十三条第四項の規定に基づき、産業安全専門官及び労働衛生専門官規程を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000042",
+        "law_num": "昭和四十七年労働省令第四十二号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "酸素欠乏症等防止規則",
+        "law_title_kana": "さんそけつぼうしょうとうぼうしきそく",
+        "law_revision_id": "347M50002000042_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、酸素欠乏症防止規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000038",
+        "law_num": "昭和四十七年労働省令第三十八号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "四アルキル鉛中毒予防規則",
+        "law_title_kana": "しあるきるなまりちゅうどくよぼうきそく",
+        "law_revision_id": "347M50002000038_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、四アルキル鉛中毒予防規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000043",
+        "law_num": "昭和四十七年労働省令第四十三号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "事務所衛生基準規則",
+        "law_title_kana": "じむしょえいせいきじゅんきそく",
+        "law_revision_id": "347M50002000043_20221201_503M60000100188",
+        "amendment_enforcement_date": "2022-12-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、事務所衛生基準規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000041",
+        "law_num": "昭和四十七年労働省令第四十一号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "電離放射線障害防止規則",
+        "law_title_kana": "でんりほうしゃせんしょうがいぼうしきそく",
+        "law_revision_id": "347M50002000041_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、電離放射線障害防止規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000039",
+        "law_num": "昭和四十七年労働省令第三十九号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "特定化学物質障害予防規則",
+        "law_title_kana": "とくていかがくぶっしつしょうがいよぼうきそく",
+        "law_revision_id": "347M50002000039_20261001_508M60000100116",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、特定化学物質等障害予防規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000037",
+        "law_num": "昭和四十七年労働省令第三十七号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "鉛中毒予防規則",
+        "law_title_kana": "なまりちゅうどくよぼうきそく",
+        "law_revision_id": "347M50002000037_20261001_508M60000100116",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、鉛中毒予防規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "423M60000100152",
+        "law_num": "平成二十三年厚生労働省令第百五十二号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "東日本大震災により生じた放射性物質により汚染された土壌等を除染するための業務等に係る電離放射線障害防止規則",
+        "law_title_kana": "ひがしにほんだいしんさいによりしょうじたほうしゃせいぶっしつによりおせんされたどじょうとうをじょせんするためのぎょうむとうにかかるでんりほうしゃせんしょうがいぼうしきそく",
+        "law_revision_id": "423M60000100152_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、東日本大震災により生じた放射性物質により汚染された土壌等を除染するための業務等に係る電離放射線障害防止規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "354M50002000018",
+        "law_num": "昭和五十四年労働省令第十八号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "粉じん障害防止規則",
+        "law_title_kana": "ふんじんしょうがいぼうしきそく",
+        "law_revision_id": "354M50002000018_20261001_508M60000100116",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、粉じん障害防止規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000033",
+        "law_num": "昭和四十七年労働省令第三十三号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "ボイラー及び圧力容器安全規則",
+        "law_title_kana": "ぼいらーおよびあつりょくようきあんぜんきそく",
+        "law_revision_id": "347M50002000033_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、ボイラー及び圧力容器安全規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000036",
+        "law_num": "昭和四十七年労働省令第三十六号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "有機溶剤中毒予防規則",
+        "law_title_kana": "ゆうきようざいちゅうどくよぼうきそく",
+        "law_revision_id": "347M50002000036_20261001_508M60000100116",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、有機溶剤中毒予防規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000032",
+        "law_num": "昭和四十七年労働省令第三十二号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生規則",
+        "law_title_kana": "ろうどうあんぜんえいせいきそく",
+        "law_revision_id": "347M50002000032_20261001_508M60000100116",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）及び労働安全衛生法施行令（昭和四十七年政令第三百十八号）の規定に基づき、並びに同法を実施するため、労働安全衛生規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "347M50002000044",
+        "law_num": "昭和四十七年労働省令第四十四号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法及びこれに基づく命令に係る登録及び指定に関する省令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうおよびこれにもとづくめいれいにかかるとうろくおよびしていにかんするしょうれい",
+        "law_revision_id": "347M50002000044_20261001_508M60000100116",
+        "amendment_enforcement_date": "2026-10-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）の規定に基づき、及び同法を実施するため、検査代行機関、検定代行機関及び指定教習機関規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "413M60000100067",
+        "law_num": "平成十三年厚生労働省令第六十七号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法第七十五条の二第一項に規定する指定試験機関の指定に関する省令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうだいななじゅうごじょうのにだいいっこうにきていするしていしけんきかんのしていにかんするしょうれい",
+        "law_revision_id": "413M60000100067_20130612_425M60000100079",
+        "amendment_enforcement_date": "2013-06-12",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）を実施するため、労働安全衛生法第七十五条の二第一項に規定する指定試験機関の指定に関する省令を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "413M60000100069",
+        "law_num": "平成十三年厚生労働省令第六十九号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法第八十五条の二第一項に規定する指定登録機関の指定に関する省令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうだいはちじゅうごじょうのにだいいっこうにきていするしていとうろくきかんのしていにかんするしょうれい",
+        "law_revision_id": "413M60000100069_20130612_425M60000100079",
+        "amendment_enforcement_date": "2013-06-12",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）を実施するため、労働安全衛生法第八十五条の二第一項に規定する指定登録機関の指定に関する省令を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "413M60000100068",
+        "law_num": "平成十三年厚生労働省令第六十八号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法第八十三条の二に規定する指定コンサルタント試験機関の指定に関する省令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうだいはちじゅうさんじょうのににきていするしていこんさるたんとしけんきかんのしていにかんするしょうれい",
+        "law_revision_id": "413M60000100068_20130612_425M60000100079",
+        "amendment_enforcement_date": "2013-06-12",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）を実施するため、労働安全衛生法第八十三条の二に規定する指定コンサルタント試験機関の指定に関する省令を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "358M50002000025",
+        "law_num": "昭和五十八年労働省令第二十五号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全衛生法に基づく製造時等検査及び型式検定の手数料の加算額の計算に関する省令",
+        "law_title_kana": "ろうどうあんぜんえいせいほうにもとづくせいぞうじとうけんさおよびかたしきけんていのてすうりょうのかさんがくのけいさんにかんするしょうれい",
+        "law_revision_id": "358M50002000025_20260401_508M60000100003",
+        "amendment_enforcement_date": "2026-04-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法関係手数料令（昭和四十七年政令第三百四十五号）第五条の二第二項の規定に基づき、労働安全衛生法関係型式検定手数料の加算額の計算に関する省令を次のように定める。",
+        "parent_id": "347CO0000000345",
+        "parent_title": "労働安全衛生法関係手数料令"
+      }
+    },
+    {
+      "law_info": {
+        "law_id": "348M50002000003",
+        "law_num": "昭和四十八年労働省令第三号",
+        "law_type": "MinisterialOrdinance"
+      },
+      "revision_info": {
+        "law_title": "労働安全コンサルタント及び労働衛生コンサルタント規則",
+        "law_title_kana": "ろうどうあんぜんこんさるたんとおよびろうどうえいせいこんさるたんときそく",
+        "law_revision_id": "348M50002000003_20250601_507M60000100062",
+        "amendment_enforcement_date": "2025-06-01",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "relation": {
+        "kind": "enactment",
+        "basis": "労働安全衛生法（昭和四十七年法律第五十七号）第八十二条第二項、第三項第三号及び第四項（第八十三条第二項において準用する場合を含む。）、第八十四条第一項、第百条第一項並びに第百三条第三項の規定に基づき、並びに同法を実施するため、労働安全コンサルタント及び労働衛生コンサルタント規則を次のように定める。",
+        "parent_id": "347AC0000000057",
+        "parent_title": "労働安全衛生法"
+      }
+    }
+  ],
+  "searched": 111,
+  "unverified": [
+    {
+      "law_info": {
+        "law_id": "324CO0000000378",
+        "law_num": "昭和二十四年政令第三百七十八号",
+        "law_type": "CabinetOrder"
+      },
+      "revision_info": {
+        "law_title": "輸出貿易管理令",
+        "law_title_kana": "ゆしゅつぼうえきかんりれい",
+        "law_revision_id": "324CO0000000378_20261016_508CO0000000325",
+        "amendment_enforcement_date": "2026-10-16",
+        "repeal_status": "None",
+        "current_revision_status": "CurrentEnforced"
+      },
+      "reason": "APIから本文を取得できませんでした。"
+    }
+  ]
+}

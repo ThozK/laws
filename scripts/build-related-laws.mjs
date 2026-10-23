@@ -1,0 +1,4 @@
+import {mkdir,writeFile} from 'node:fs/promises';
+import {discoverRelatedLaws} from '../src/relatedLaws.js';
+const ids=process.argv.slice(2);if(!ids.length)throw Error('法令IDを指定してください。');
+for(const id of ids){const response=await fetch(`https://laws.e-gov.go.jp/api/2/law_data/${id}?elm=LawTitle&response_format=json`);if(!response.ok)throw Error(`法令の取得に失敗: ${response.status}`);const parent=await response.json();let phase='';const result=await discoverRelatedLaws(parent,{onProgress:p=>{if(p.phase==='error'){process.stdout.write(`ERROR ${p.id}: ${p.error}\n`);return;}const next=p.phase==='search'?`検索 ${p.title||''}`:`制定根拠の確認 ${Math.floor(p.done/20)*20}/${p.total}`;if(next!==phase){phase=next;process.stdout.write(next+'\n');}}});await mkdir('public/data/relations',{recursive:true});await writeFile(`public/data/relations/${id}.json`,JSON.stringify(result,null,2)+'\n');process.stdout.write(`${parent.revision_info.law_title}: ${result.laws.length}法令\n`);}

@@ -5,7 +5,7 @@ import {xmlToEL} from 'lawtext/dist/src/node/el/xmlToEL.js';
 import {analyze} from 'lawtext/dist/src/analyzer/index.js';
 import {externalTargets,internalTargets,findTarget,buildBacklinks,delegationCandidates} from '../src/references.js';
 const laws=await Promise.all(['415AC0000000057','415CO0000000507','428M60020000003'].map(async id=>{
- const d=JSON.parse(await readFile(new URL(`../public/data/${id}.json`,import.meta.url)));const el=xmlToEL(Buffer.from(d.law_full_text,'base64').toString());const analysis=await analyze({elToBeModified:el});let n=0;const articles=[];function visit(e){e.readerNode=String(n++);if(e.tag==='Article'){e.readerKey=String(articles.length);articles.push({key:e.readerKey,label:e.children.find(c=>c.tag==='ArticleTitle')?.text()});}for(const c of e.children)if(typeof c!=='string')visit(c);}visit(el);return {num:d.law_info.law_num,el,analysis,articles};
+ const d=JSON.parse(await readFile(new URL(`../public/data/${id}.json`,import.meta.url)));const el=xmlToEL(Buffer.from(d.law_full_text,'base64').toString());const analysis=await analyze({elToBeModified:el});let n=0;const articles=[];function visit(e){e.readerNode=String(n++);if(e.tag==='Article'){e.readerKey=String(articles.length);articles.push({key:e.readerKey,label:e.children.find(c=>c.tag==='ArticleTitle')?.text()});}for(const c of e.children)if(typeof c!=='string')visit(c);}visit(el);return {title:d.revision_info.law_title,num:d.law_info.law_num,el,analysis,articles};
 }));
 test('施行令第一条の第二条第二項は法律へ解決される',()=>{
  const env=[...laws[1].analysis.pointerEnvByEL.values()].find(e=>e.pointer.text()==='第二条第二項'&&e.sentenceEnv.container.thisOrClosest(c=>c.el.tag==='Article')?.el.attr.Num==='1');
@@ -178,3 +178,12 @@ test('下位条文の参照先が細分イなら号全体ではなくイの行�
  const target=findTarget(laws[0],{article:'78',paragraph:'1',item:'7',subitems:['1']}).el;
  assert.equal(model.assignments[0].get(target.readerNode).row,model.assignments[1].get(article.readerNode).row);
 });
+test('個人情報保護法26条の3つの規則引用を事態・報告・委託元通知で区別する',()=>{
+ const maps=buildBacklinks(laws),article=findTarget(laws[0],{article:'26'}).el,paragraph=article.children.find(c=>c.tag==='Paragraph'&&c.attr.Num==='1'),body=paragraph.text();
+ const matches=[...body.matchAll(/個人情報保護委員会規則/g)];assert.equal(matches.length,3);
+ const expected=['第七条','第八条','第九条'];matches.forEach((m,i)=>{const selected=delegationCandidates(maps[0],{article:article.readerKey,paragraph:'1',index:0,delegationText:body.slice(m.index),delegationBefore:body.slice(0,m.index)},m[0]);assert.deepEqual(selected.map(r=>r.label),[expected[i]]);});
+ const p2=article.children.find(c=>c.tag==='Paragraph'&&c.attr.Num==='2').text(),offset=p2.indexOf('個人情報保護委員会規則');assert.deepEqual(delegationCandidates(maps[0],{article:article.readerKey,paragraph:'2',index:0,delegationText:p2.slice(offset),delegationBefore:p2.slice(0,offset)},'個人情報保護委員会規則').map(r=>r.label),['第十条']);
+});
+test('26条の引用の前後が欠けた場合は附則を混ぜずに本則の3候補を残す',()=>{const maps=buildBacklinks(laws),article=findTarget(laws[0],{article:'26'}).el;assert.deepEqual(delegationCandidates(maps[0],{article:article.readerKey,paragraph:'1',index:0,delegationText:'個人情報保護委員会規則'},'個人情報保護委員会規則').map(r=>r.label),['第七条','第八条','第九条']);});
+
+test('26条で報告・通知まで読めない手続の引用も安全側の3候補にする',()=>{const maps=buildBacklinks(laws),article=findTarget(laws[0],{article:'26'}).el;assert.deepEqual(delegationCandidates(maps[0],{article:article.readerKey,paragraph:'1',index:0,delegationText:'個人情報保護委員会規則で定めるところにより'},'個人情報保護委員会規則').map(r=>r.label),['第七条','第八条','第九条']);});

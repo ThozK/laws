@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {noteStack,noteById,childNotePosition} from '../src/noteStack.js';
+test('引用の引用は祖先の付箋を残して順番に並べる',()=>{const first={id:1},second={id:2,previousNote:first},third={id:3,previousNote:second};assert.deepEqual(noteStack(third),[first,second,third]);assert.equal(noteById(third,'1'),first);assert.deepEqual(noteStack(third.previousNote),[first,second]);assert.equal(noteById(third,undefined),null);});
+test('途中の付箋から別の引用を開くとその付箋に紐づく枝へ切り替える',()=>{const first={id:1},old={id:2,previousNote:first},newChild={id:3,previousNote:noteById(old,'1')};assert.deepEqual(noteStack(newChild).map(n=>n.id),[1,3]);});
+test('追加した付箋は画面内に収まり親の右側か少しずらして表示する',()=>{for(const viewport of [{width:1280,height:720},{width:375,height:667}]){const parent={left:12,top:100,width:Math.min(440,viewport.width-24)},child=childNotePosition(parent,viewport);assert.ok(child.left>=12);assert.ok(child.left+child.width<=viewport.width-12);assert.ok(child.top+child.maxHeight<=viewport.height-12);assert.ok(child.top>parent.top);}assert.equal(childNotePosition({left:12,top:12,width:440},{width:1280,height:720}).left,464);});
