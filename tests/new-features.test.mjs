@@ -22,3 +22,11 @@ test('三段表は条番号を第1項本文と続け、号の折り返しにぶ�
  const el=xmlToEL('<Law><LawBody><LawTitle>試験法</LawTitle><MainProvision><Article Num="1"><ArticleCaption>（目的）</ArticleCaption><ArticleTitle>第一条</ArticleTitle><Paragraph Num="1"><ParagraphNum/><ParagraphSentence><Sentence>目的の本文。</Sentence></ParagraphSentence><Item Num="1"><ItemTitle>一</ItemTitle><ItemSentence><Sentence>号の本文。</Sentence></ItemSentence></Item></Paragraph></Article></MainProvision></LawBody></Law>');let n=0;function visit(e){e.readerNode=String(n++);for(const c of e.children||[])if(typeof c!=='string')visit(c);}visit(el);const law={el,title:'試験法',num:'令和元年法律第一号',analysis:{pointerEnvByEL:new Map()}};
  const paragraphs=pdfRows([law,null,null]).flatMap(r=>r[0]);assert.ok(paragraphs.some(p=>p.text==='第一条　目的の本文。'&&p.hanging));assert.ok(paragraphs.some(p=>p.text==='（目的）'&&p.depth===1));assert.ok(paragraphs.some(p=>p.text==='一　号の本文。'&&p.depth===1&&p.hanging));
 });
+
+test('石綿規則のような別名の規則でも番号を省いた「法」の定義を解決する',async()=>{
+ const {resolveLawReferences}=await import('../src/resolveReferences.js');
+ const title='労働安全衛生法',num='昭和四十七年法律第五十七号';
+ const ref={tag:'____LawRef',attr:{lawNum:num,suggestedLawTitle:title},children:[],text:()=>title+'（'+num+'）'};
+ const law={title:'石綿障害予防規則',el:{children:[ref],text:()=>title+'（'+num+'）の規定に基づき制定。'+title+'（以下「法」という。）に規定する措置。'},analysis:{pointerEnvByEL:new Map()}};
+ resolveLawReferences(law);assert.equal(law.aliases.法.lawNum,num);
+});

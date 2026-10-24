@@ -54,3 +54,29 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 [data-theme="dark"] .header-actions button:hover{background:linear-gradient(145deg,#8294b070,#46556b99);box-shadow:0 5px 14px #0004,inset 0 1px 0 #ffffff30}
 [data-theme="dark"] .header-actions>button[aria-pressed=true]{background:linear-gradient(145deg,#7896c380,#465e8699);border-color:#a6c7ff66;color:#fff}
 @media(prefers-reduced-motion:reduce){.header-actions button{transition:none}.header-actions button:hover{transform:none}}
+.note-body{font-size:var(--reader-font);line-height:1.9}.note-body .law-title{font-size:1.05em}
+/* ライトモードでは三段表の対応行に区切り線を表示しない。 */
+:root:not([data-theme="dark"]) .aligned-columns section[data-alignment-row],
+:root:not([data-theme="dark"]) .detail-aligned div[data-alignment-row]{border-top-color:transparent}
+/* 星を結ぶホームアイコン */
+.brand-mark .constellation-line{stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset 1.1s ease,opacity .3s ease;filter:drop-shadow(0 0 3px #7cbaff)}
+.brand-mark .constellation-star{fill:currentColor;transition:filter .5s ease,fill .5s ease}
+.brand .brand-mark:hover,.brand .brand-mark:focus-visible{background:transparent;color:#527cae}
+.brand-mark:hover .constellation-line,.brand-mark:focus-visible .constellation-line{stroke-dashoffset:0;opacity:.85}
+.brand-mark:hover .constellation-star,.brand-mark:focus-visible .constellation-star{fill:#5b9bde;filter:drop-shadow(0 0 2px #91bdff) drop-shadow(0 0 5px #6ba6ff)}
+[data-theme="dark"] .brand-mark .constellation-star{fill:#d3dfed}
+[data-theme="dark"] .brand .brand-mark:hover,[data-theme="dark"] .brand .brand-mark:focus-visible{background:transparent;color:#b4d5ff}
+[data-theme="dark"] .brand-mark:hover .constellation-star,[data-theme="dark"] .brand-mark:focus-visible .constellation-star{fill:#fff8e5;filter:drop-shadow(0 0 2px #fff2c4) drop-shadow(0 0 6px #a3c9ff)}
+@media(prefers-reduced-motion:reduce){.brand-mark .constellation-line,.brand-mark .constellation-star{transition:none}}
+
+/* ホバーが0.3秒続いてから星と線を灯す。離れるときは待たない。 */
+.brand-mark:hover .constellation-line,.brand-mark:focus-visible .constellation-line,
+.brand-mark:hover .constellation-star,.brand-mark:focus-visible .constellation-star{transition-delay:.3s}
+@media(prefers-reduced-motion:reduce){.brand-mark:hover .constellation-line,.brand-mark:focus-visible .constellation-line,.brand-mark:hover .constellation-star,.brand-mark:focus-visible .constellation-star{transition-delay:0s}}
+/* 0.3秒待機＋1.1秒の描画後に、一度だけ星明かりを揺らす。 */
+.brand-mark:hover svg,.brand-mark:focus-visible svg{animation:constellation-shimmer 1.6s cubic-bezier(.45,0,.55,1) 1.4s 1}
+@keyframes constellation-shimmer{
+ 0%,100%{filter:brightness(1) drop-shadow(0 0 0 transparent)}
+ 50%{filter:brightness(1.5) drop-shadow(0 0 5px #bcdcff)}
+}
+@media(prefers-reduced-motion:reduce){.brand-mark:hover svg,.brand-mark:focus-visible svg{animation:none}}

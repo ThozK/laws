@@ -10,6 +10,9 @@ export function resolveLawReferences(law,peers=[]){
  }
  const refs=[];function visit(el){if(el.tag==='____LawRef')refs.push(el);for(const c of el.children||[])if(typeof c!=='string')visit(c);}visit(law.el);
  for(const ref of refs){const t=ref.attr.suggestedLawTitle,n=ref.attr.lawNum;if(!n)continue;if(t===base||(!aliases.法&&law.title?.endsWith('施行令')&&law.el.text().includes(base+'（以下「法」という')&&refs[0]===ref))aliases.法={lawNum:n,title:base};if(t===base+'施行令')aliases.令={lawNum:n,title:t};}
+ // Read explicit aliases even when the regulation name differs from the parent law.
+ const text=law.el.text();
+ for(const ref of refs){const n=ref.attr.lawNum;if(!n)continue;const start=text.indexOf(n);if(start<0)continue;const tail=text.slice(start+n.length,start+n.length+100);const t=ref.attr.suggestedLawTitle;const name=ref.text().match(/以下「([法令])」という/)?.[1]||(['法','令'].find(a=>t&&text.includes(`${t}（以下「${a}」という`)))||tail.match(/^[^。]*?以下「([法令])」という/)?.[1];if(name)aliases[name]={lawNum:n,title:ref.attr.suggestedLawTitle||n};}
  for(const env of law.analysis.pointerEnvByEL.values()){
   delete env.readerTargets;
   let prefix='',found=false;

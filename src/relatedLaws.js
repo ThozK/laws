@@ -24,7 +24,7 @@ export async function loadRelatedSnapshot(parent,{signal,fetcher=fetch,baseURL='
  parent=parentRecord(parent);const id=parent.law_info.law_id,key=`sandan-related-v${VERSION}:${id}`,revision=parent.revision_info.law_revision_id;
  function usable(data){return data?.version===VERSION&&data.parent?.law_info.law_id===id&&Array.isArray(data.laws);}
  if(memory.has(key))return memory.get(key);
- try{const data=JSON.parse(storage?.getItem(key)||'null');if(usable(data)&&Date.now()-Date.parse(data.generated_at)<86400000&&(!revision||data.parent.revision_info.law_revision_id===revision)){memory.set(key,data);return data;}}catch{}
+ try{const data=JSON.parse(storage?.getItem(key)||'null');if(usable(data)){memory.set(key,data);return data;}}catch{}
  const response=await fetcher(`${baseURL}data/relations/${encodeURIComponent(id)}.json`,{signal});if(response.status===404||/^text\/html\b/i.test(response.headers?.get('content-type')||''))return null;if(!response.ok)throw Error('保存済みの関連法令一覧を読み込めませんでした。');const data=await response.json();if(signal?.aborted)throw new DOMException('Aborted','AbortError');if(!usable(data))throw Error('関連法令一覧の形式が正しくありません。');memory.set(key,data);return data;
 }
 export async function getRelatedLaws(parent,{refresh=false,storage=globalThis.localStorage,...options}={}){

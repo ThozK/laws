@@ -36,3 +36,13 @@
  .reader,.aligned-columns .reader{padding-top:12px;padding-bottom:32px}
  .column-footer,.app>.footer{display:none}
 }
+@media(max-width:700px){
+ .header-actions .alignment-toggle,.header-actions .bookmark-button{display:none}
+ .brand{min-height:20px}.brand h1{font-size:11px}.brand .brand-mark{width:20px;height:20px}.brand-mark svg{width:20px;height:20px}
+ .header{padding:3px 8px}.header-actions{margin-top:1px;gap:4px}.header-actions>button,.font-control button{min-height:28px;padding:4px 7px;font-size:10px}.header-actions .theme-toggle{width:28px;height:28px;min-height:28px}
+ .mobile-tabs{padding:2px 10px 4px}.mobile-tabs button{min-height:28px;padding:3px;font-size:11px}
+ .column-header{padding:5px 9px}.column-header h3{font-size:11px;margin-bottom:3px}.jump-label select{height:28px;min-height:28px}.jump-label .reading-back{height:28px;min-height:28px;font-size:10px}
+ .reference-note .note-body{font-size:var(--reader-font)}
+}
+
+@media(max-width:700px){.app>.notice{display:none}}
