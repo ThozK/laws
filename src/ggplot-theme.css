@@ -175,3 +175,5 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 [data-theme="dark"] .welcome-paper i{background:#777}
 [data-theme="dark"] .welcome .welcome-start{background:#555;color:#fff;border-color:#888}
 [data-theme="dark"] .welcome .welcome-start:hover{background:#666}
+
+.welcome-name ruby{ruby-position:over}.welcome-name rt{font-size:12px;font-weight:400;letter-spacing:0;text-align:center;ruby-align:center;color:inherit}.welcome-name ruby{ruby-align:center}

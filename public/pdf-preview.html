@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDFプレビュー｜lawOnRow - 法令三段表メーカー -</title></head><body><script>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDFプレビュー｜LawRow — 法令三段表メーカー</title></head><body><script>
 const source = sessionStorage.getItem('sandan-pdf-document');
 if (source) { document.open(); document.write(source); document.close(); }
 else { const message = document.createElement('p'); message.textContent = '元の画面から「pdf保存」を押して、もう一度開いてください。'; document.body.append(message); }
