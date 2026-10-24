@@ -85,3 +85,38 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 @media(max-width:700px){.header-actions button{backdrop-filter:none;-webkit-backdrop-filter:none}}
 .library-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px}.library-toolbar label{display:flex;align-items:center;gap:5px}.library-rows{max-height:40dvh;overflow:auto;margin:12px 0}.library-row{display:flex;align-items:stretch;gap:6px;margin-bottom:8px}.library-row .result{margin:0;flex:1;min-width:0}.library-row>button:last-child{flex:0 0 40px}.law-library>p{font-size:12px;line-height:1.7}.dialog [hidden]{display:none!important}
 @media(max-width:700px){.library-toolbar input[type=checkbox]{min-height:22px;width:22px}.library-toolbar button{min-height:36px}.library-row button{min-height:40px}}
+.header-actions .favorite-toggle{display:grid;place-items:center;width:38px;height:38px;padding:0;flex-shrink:0}
+.header-actions .favorite-toggle[aria-pressed=true]{color:#a96c12;background:linear-gradient(145deg,#fff2ccdd,#efd79b99);border-color:#e2bf70}
+[data-theme="dark"] .header-actions .favorite-toggle[aria-pressed=true]{color:#ffda86;background:linear-gradient(145deg,#99712f70,#5b482d80);border-color:#e3bc6b66}
+@media(max-width:700px){.header-actions .favorite-toggle{width:28px;height:28px;min-height:28px;padding:0}.header-actions .favorite-toggle svg{width:17px;height:17px}}
+
+/* お気に入りは星そのものだけを表示する。 */
+.header-actions .favorite-toggle,
+.header-actions .favorite-toggle:hover,
+.header-actions .favorite-toggle[aria-pressed=true],
+[data-theme="dark"] .header-actions .favorite-toggle,
+[data-theme="dark"] .header-actions .favorite-toggle:hover,
+[data-theme="dark"] .header-actions .favorite-toggle[aria-pressed=true]{background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transform:none;color:var(--gg-muted)}
+.header-actions .favorite-toggle svg{transition:color .25s,filter .25s}
+.header-actions .favorite-toggle[aria-pressed=true]{color:#b97b0e}
+.header-actions .favorite-toggle[aria-pressed=true] svg{filter:drop-shadow(0 0 3px #e6b54c88)}
+[data-theme="dark"] .header-actions .favorite-toggle[aria-pressed=true]{color:#ffdb87}
+[data-theme="dark"] .header-actions .favorite-toggle[aria-pressed=true] svg{filter:drop-shadow(0 0 4px #ffd66e99)}
+
+.library-selection{display:grid;grid-template-columns:4fr 1fr 1fr;gap:6px}.library-selection button{min-width:0;padding-inline:6px;white-space:nowrap}
+.library-selection button:not(:first-child){white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+
+.law-selection-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.law-selection-tabs button{min-width:0;padding:9px 4px;white-space:nowrap;font-size:12px}
+@media(max-width:700px){.law-selection-tabs{gap:4px}.law-selection-tabs button{font-size:10px;padding:7px 2px;min-height:38px}}
+/* 付箋・候補一覧はモノトーンで本文と区別。 */
+.reference-note,.reference-note.candidate-popup{background:#f7f7f7;color:#303030;border-color:#c7c7c7;border-top-color:#777}
+.reference-note .note-heading h3,.reference-note .note-location,.reference-note .note-heading button{color:#4b4b4b}
+.reference-note .note-body .reference{background:#0000000c}.reference-note .note-body .reference:hover{background:#0000001c}
+.reference-note .delegation-choices button{background:#fff;color:#303030;border-color:#ccc}
+.reference-note .delegation-choices button:hover,.reference-note .delegation-choices button:focus-visible{background:#e6e6e6;color:#222}
+.reference-note:focus-within{outline-color:#999}
+[data-theme="dark"] .reference-note,[data-theme="dark"] .reference-note.candidate-popup{background:#292929;color:#e8e8e8;border-color:#585858;border-top-color:#aaa}
+[data-theme="dark"] .reference-note .note-heading h3,[data-theme="dark"] .reference-note .note-location,[data-theme="dark"] .reference-note .note-heading button{color:#d5d5d5}
+[data-theme="dark"] .reference-note .delegation-choices button{background:#383838;color:#eee;border-color:#626262}
+[data-theme="dark"] .reference-note .delegation-choices button:hover,[data-theme="dark"] .reference-note .delegation-choices button:focus-visible{background:#4b4b4b;color:#fff}
+[data-theme="dark"] .reference-note .note-body .reference{background:#ffffff12}[data-theme="dark"] .reference-note .note-body .reference:hover{background:#ffffff26}
