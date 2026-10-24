@@ -80,3 +80,8 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
  50%{filter:brightness(1.5) drop-shadow(0 0 5px #bcdcff)}
 }
 @media(prefers-reduced-motion:reduce){.brand-mark:hover svg,.brand-mark:focus-visible svg{animation:none}}
+/* ガラスの輪郭とハイライトを保ち、背景ぼかしの描画負荷を抑える。 */
+.header-actions button{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+@media(max-width:700px){.header-actions button{backdrop-filter:none;-webkit-backdrop-filter:none}}
+.library-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px}.library-toolbar label{display:flex;align-items:center;gap:5px}.library-rows{max-height:40dvh;overflow:auto;margin:12px 0}.library-row{display:flex;align-items:stretch;gap:6px;margin-bottom:8px}.library-row .result{margin:0;flex:1;min-width:0}.library-row>button:last-child{flex:0 0 40px}.law-library>p{font-size:12px;line-height:1.7}.dialog [hidden]{display:none!important}
+@media(max-width:700px){.library-toolbar input[type=checkbox]{min-height:22px;width:22px}.library-toolbar button{min-height:36px}.library-row button{min-height:40px}}

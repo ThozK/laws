@@ -1,0 +1,4 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {readLibrary,rememberEntry,entryKey} from '../src/lawLibrary.js';
+test('履歴は組み合わせを区別し重複を先頭にまとめて30件に制限する',()=>{const entry=n=>({ids:[String(n),null,null],titles:['法令'+n],time:n});let rows=[];for(let n=0;n<40;n++)rows=rememberEntry(rows,entry(n),30);assert.equal(rows.length,30);rows=rememberEntry(rows,entry(20),30);assert.equal(rows[0].ids[0],'20');assert.equal(rows.length,30);assert.notEqual(entryKey(['a','b',null]),entryKey(['a',null,'b']));});
+test('履歴OFF設定とお気に入りを復元し、破損データでも起動できる',()=>{assert.equal(readLibrary({getItem:()=>JSON.stringify({enabled:false,history:[],favorites:[{ids:['a',null,null],titles:['法律'],time:1}]})}).favorites.length,1);assert.equal(readLibrary({getItem:()=>'{broken'}).enabled,true);assert.deepEqual(readLibrary({getItem:()=>JSON.stringify({history:[{},null]})}).history,[]);});
