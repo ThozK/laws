@@ -58,28 +58,6 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 /* ライトモードでは三段表の対応行に区切り線を表示しない。 */
 :root:not([data-theme="dark"]) .aligned-columns section[data-alignment-row],
 :root:not([data-theme="dark"]) .detail-aligned div[data-alignment-row]{border-top-color:transparent}
-/* 星を結ぶホームアイコン */
-.brand-mark .constellation-line{stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset 1.1s ease,opacity .3s ease;filter:drop-shadow(0 0 3px #7cbaff)}
-.brand-mark .constellation-star{fill:currentColor;transition:filter .5s ease,fill .5s ease}
-.brand .brand:hover .brand-mark,.brand .brand:focus-visible .brand-mark{background:transparent;color:#527cae}
-.brand:hover .brand-mark .constellation-line,.brand:focus-visible .brand-mark .constellation-line{stroke-dashoffset:0;opacity:.85}
-.brand:hover .brand-mark .constellation-star,.brand:focus-visible .brand-mark .constellation-star{fill:#5b9bde;filter:drop-shadow(0 0 2px #91bdff) drop-shadow(0 0 5px #6ba6ff)}
-[data-theme="dark"] .brand-mark .constellation-star{fill:#d3dfed}
-[data-theme="dark"] .brand .brand:hover .brand-mark,[data-theme="dark"] .brand .brand:focus-visible .brand-mark{background:transparent;color:#b4d5ff}
-[data-theme="dark"] .brand:hover .brand-mark .constellation-star,[data-theme="dark"] .brand:focus-visible .brand-mark .constellation-star{fill:#fff8e5;filter:drop-shadow(0 0 2px #fff2c4) drop-shadow(0 0 6px #a3c9ff)}
-@media(prefers-reduced-motion:reduce){.brand-mark .constellation-line,.brand-mark .constellation-star{transition:none}}
-
-/* ホバーが0.3秒続いてから星と線を灯す。離れるときは待たない。 */
-.brand:hover .brand-mark .constellation-line,.brand:focus-visible .brand-mark .constellation-line,
-.brand:hover .brand-mark .constellation-star,.brand:focus-visible .brand-mark .constellation-star{transition-delay:.3s}
-@media(prefers-reduced-motion:reduce){.brand:hover .brand-mark .constellation-line,.brand:focus-visible .brand-mark .constellation-line,.brand:hover .brand-mark .constellation-star,.brand:focus-visible .brand-mark .constellation-star{transition-delay:0s}}
-/* 0.3秒待機＋1.1秒の描画後に、一度だけ星明かりを揺らす。 */
-.brand:hover .brand-mark svg,.brand:focus-visible .brand-mark svg{animation:constellation-shimmer 1.6s cubic-bezier(.45,0,.55,1) 1.4s 1}
-@keyframes constellation-shimmer{
- 0%,100%{filter:brightness(1) drop-shadow(0 0 0 transparent)}
- 50%{filter:brightness(1.5) drop-shadow(0 0 5px #bcdcff)}
-}
-@media(prefers-reduced-motion:reduce){.brand:hover .brand-mark svg,.brand:focus-visible .brand-mark svg{animation:none}}
 /* ガラスの輪郭とハイライトを保ち、背景ぼかしの描画負荷を抑える。 */
 .header-actions button{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 @media(max-width:700px){.header-actions button{backdrop-filter:none;-webkit-backdrop-filter:none}}
@@ -177,3 +155,26 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 [data-theme="dark"] .welcome .welcome-start:hover{background:#666}
 
 .welcome-name ruby{ruby-position:over}.welcome-name rt{font-size:12px;font-weight:400;letter-spacing:0;text-align:center;ruby-align:center;color:inherit}.welcome-name ruby{ruby-align:center}
+
+/* ローローの文字アイコンをサイト全体で共用する。 */
+.brand-mark .lawrow-logo{display:block;width:46px;height:46px;transform-origin:50% 80%}
+.welcome-brand{display:inline-flex;flex-direction:column;align-items:center;gap:23px;text-decoration:none;color:inherit}
+.welcome-logo{display:block;width:176px;height:176px;transform-origin:50% 80%}
+@media(max-width:700px){.brand-mark .lawrow-logo{width:24px;height:24px}.welcome-logo{width:132px;height:132px}.welcome-brand{gap:20px}.welcome{padding-block:24px}}
+
+/* ロゴは透明背景。文字の輪郭は明暗テーマに合わせる。 */
+.lawrow-logo{color:#292929}
+.brand .brand-mark,[data-theme="dark"] .brand .brand-mark{background:transparent;border:0;box-shadow:none}
+[data-theme="dark"] .lawrow-logo{color:#eee}
+
+/* アイコンと直下の英字を一体のロゴとして配置する。 */
+.brand .brand-mark{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:66px;height:auto}
+.brand-mark .lawrow-logo{width:58px;height:58px}
+.brand-wordmark{font-family:inherit;font-size:12px;line-height:1.1;font-weight:600;letter-spacing:.025em}
+.welcome-brand{gap:14px}.welcome-logo{width:210px;height:210px}.welcome-name{font-size:40px;margin:0 0 8px;line-height:1.2}
+@media(max-width:700px){.brand .brand-mark{width:37px;height:auto;gap:1px}.brand-mark .lawrow-logo{width:32px;height:32px}.brand-wordmark{font-size:8px}.welcome-logo{width:164px;height:164px}.welcome-brand{gap:12px}.welcome-name{font-size:32px}}
+
+/* 大小とも同じ比率・ゴシック体のモノクロロゴ。 */
+.brand-wordmark,.welcome-name{font-family:'BIZ UDPGothic','Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;font-weight:700;letter-spacing:.025em;line-height:1.1}
+.welcome-brand{gap:7px}.welcome-name{font-size:43px;margin:0 0 8px}
+@media(max-width:700px){.welcome-brand{gap:5px}.welcome-name{font-size:34px}}
