@@ -46,3 +46,14 @@
 }
 
 @media(max-width:700px){.app>.notice{display:none}}
+/* スマホの選択タブは同じ状態表現にし、法令の識別色は上線に保つ。 */
+@media(max-width:700px){
+ .mobile-tabs button,.dialog .selection-modes button{background:#fff;color:#333;border-color:#c8c8c8;box-shadow:none;transition:background-color .18s ease,color .18s ease,border-color .18s ease}
+ .mobile-tabs button[aria-pressed=true],.dialog .selection-modes button[aria-pressed=true]{background:#3d3d3d;color:#fff;border-color:#3d3d3d}
+ [data-theme="dark"] .mobile-tabs button,[data-theme="dark"] .dialog .selection-modes button{background:#303640;color:#e5e7eb;border-color:#535b67}
+ [data-theme="dark"] .mobile-tabs button[aria-pressed=true],[data-theme="dark"] .dialog .selection-modes button[aria-pressed=true]{background:#526a8d;color:#fff;border-color:#7593bf}
+ .mobile-tabs button,.mobile-tabs button[aria-pressed=true],[data-theme="dark"] .mobile-tabs button,[data-theme="dark"] .mobile-tabs button[aria-pressed=true]{border-top:3px solid var(--gg-act)}
+ .mobile-tabs button:nth-child(2),.mobile-tabs button:nth-child(2)[aria-pressed=true],[data-theme="dark"] .mobile-tabs button:nth-child(2),[data-theme="dark"] .mobile-tabs button:nth-child(2)[aria-pressed=true]{border-top-color:var(--gg-order)}
+ .mobile-tabs button:nth-child(3),.mobile-tabs button:nth-child(3)[aria-pressed=true],[data-theme="dark"] .mobile-tabs button:nth-child(3),[data-theme="dark"] .mobile-tabs button:nth-child(3)[aria-pressed=true]{border-top-color:var(--gg-rule)}
+}
+@media(max-width:700px){.jump-label select{height:25px;min-height:25px;padding:1px 5px;font-size:16px}.jump-label .reading-back{height:25px;min-height:25px;padding:1px 6px}}

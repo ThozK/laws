@@ -30,3 +30,30 @@ test('石綿規則のような別名の規則でも番号を省いた「法」�
  const law={title:'石綿障害予防規則',el:{children:[ref],text:()=>title+'（'+num+'）の規定に基づき制定。'+title+'（以下「法」という。）に規定する措置。'},analysis:{pointerEnvByEL:new Map()}};
  resolveLawReferences(law);assert.equal(law.aliases.法.lawNum,num);
 });
+
+test('関連リスト未登録でも通常の施行令・施行規則だけを候補とし他法令を混ぜない',async()=>{
+ const {fetchStandardCompanions}=await import('../src/lawApi.js');const title='使用済自動車の再資源化等に関する法律';
+ const row=(id,name,type,status='None')=>({law_info:{law_id:id,law_type:type},revision_info:{law_title:name,repeal_status:status}});
+ const rows=await fetchStandardCompanions(title,{fetcher:async()=>({ok:true,status:200,json:async()=>({laws:[row('order',title+'施行令','CabinetOrder'),row('rule',title+'施行規則','MinisterialOrdinance'),row('other','別の法律施行令','CabinetOrder'),row('repeal',title+'施行規則','Rule','Repeal')]})})});
+ assert.deepEqual(rows.map(r=>r.law_info.law_id),['order','rule']);
+});
+
+test('PDF冒頭は丸なしの法令名・施行日・制定文・目次を保持する',()=>{
+ const el=xmlToEL('<Law><LawBody><LawTitle>試験法</LawTitle><EnactStatement>試験法を次のように制定する。</EnactStatement><TOC><TOCLabel>目次</TOCLabel><TOCChapter Num="1"><ChapterTitle>第一章　総則</ChapterTitle><ArticleRange>（第一条―第二条）</ArticleRange><TOCSection Num="1"><SectionTitle>第一節　目的</SectionTitle><ArticleRange>（第一条）</ArticleRange></TOCSection></TOCChapter></TOC><MainProvision><Article Num="1"><ArticleTitle>第一条</ArticleTitle><Paragraph Num="1"><ParagraphNum/><ParagraphSentence><Sentence>本文。</Sentence></ParagraphSentence></Paragraph></Article></MainProvision></LawBody></Law>');let n=0;function visit(e){e.readerNode=String(n++);if(e.tag==='Article')e.readerKey='0';for(const c of e.children||[])if(typeof c!=='string')visit(c);}visit(el);
+ const law={title:'試験法',num:'令和元年法律第一号',date:'2026-10-01',el,analysis:{pointerEnvByEL:new Map()}},rows=pdfRows([law,null,null]),parts=rows.flatMap(r=>r[0]);
+ assert.equal(parts[0].text,'試験法（令和元年法律第一号）');assert.equal(parts[1].text,'施行日　2026-10-01');assert.ok(parts.some(p=>p.text==='試験法を次のように制定する。'));assert.ok(parts.some(p=>p.text==='目次'));assert.ok(parts.some(p=>p.text==='第一章　総則　（第一条―第二条）'));assert.ok(parts.some(p=>p.depth===1&&p.text.startsWith('第一節')));
+});
+
+test('PDFは章節・条の見出し・項の前を空け、号には空白行を足さない',()=>{
+ const el=xmlToEL('<Law><LawBody><LawTitle>試験法</LawTitle><MainProvision><Chapter Num="1"><ChapterTitle>第一章　総則</ChapterTitle><Section Num="1"><SectionTitle>第一節　目的</SectionTitle><Article Num="1"><ArticleCaption>（目的）</ArticleCaption><ArticleTitle>第一条</ArticleTitle><Paragraph Num="1"><ParagraphNum/><ParagraphSentence><Sentence>最初の項。</Sentence></ParagraphSentence><Item Num="1"><ItemTitle>一</ItemTitle><ItemSentence><Sentence>号の本文。</Sentence></ItemSentence></Item></Paragraph><Paragraph Num="2"><ParagraphNum>２</ParagraphNum><ParagraphSentence><Sentence>次の項。</Sentence></ParagraphSentence></Paragraph></Article></Section></Chapter></MainProvision></LawBody></Law>');let n=0;function visit(e){e.readerNode=String(n++);if(e.tag==='Article')e.readerKey='0';for(const c of e.children||[])if(typeof c!=='string')visit(c);}visit(el);
+ const law={el,title:'試験法',num:'令和元年法律第一号',analysis:{pointerEnvByEL:new Map()}},parts=pdfRows([law,null,null]).flatMap(r=>r[0]);
+ assert.ok(parts.filter(p=>p.heading||p.caption).every(p=>p.gapBefore));assert.equal(parts.find(p=>p.text.includes('最初の項')).gapBefore,false);assert.equal(parts.find(p=>p.text.includes('次の項')).gapBefore,true);assert.equal(parts.find(p=>p.text.includes('号の本文')).gapBefore,false);assert.match(pdfHTML([law,null,null]),/marginBlockStart='12.6pt'/);
+});
+
+test('PDFは空行と章節見出しの長さを含む本文開始位置を揃える',async()=>{
+ const {pdfBodyPadding}=await import('../src/exportPdf.js');
+ assert.deepEqual(pdfBodyPadding([0,16.8,null]),[16.8,0,0]);
+ assert.deepEqual(pdfBodyPadding([0,84,33.6]),[84,0,50.4]);
+ assert.deepEqual(pdfBodyPadding([0,0,0]),[0,0,0]);
+ const offsets=[16.8,84,33.6],pad=pdfBodyPadding(offsets);assert.ok(offsets.every((n,i)=>Math.abs(n+pad[i]-84)<.001));
+});

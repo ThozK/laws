@@ -120,3 +120,5 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 [data-theme="dark"] .reference-note .delegation-choices button{background:#383838;color:#eee;border-color:#626262}
 [data-theme="dark"] .reference-note .delegation-choices button:hover,[data-theme="dark"] .reference-note .delegation-choices button:focus-visible{background:#4b4b4b;color:#fff}
 [data-theme="dark"] .reference-note .note-body .reference{background:#ffffff12}[data-theme="dark"] .reference-note .note-body .reference:hover{background:#ffffff26}
+/* 条文インデックスの選択枠をコンパクトにする。 */
+.jump-label select{padding:5px 7px;font-size:11px;border-radius:4px}
