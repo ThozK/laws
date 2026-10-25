@@ -6,34 +6,25 @@
 
 https://thozk.github.io/laws/
 
-<img width="1012" height="691" alt="スクリーンショット 2026-10-20 23 17 57" src="https://github.com/user-attachments/assets/5329af2c-8671-4205-be48-f24e9a653aea" />
+<img width="1133" height="813" alt="スクリーンショット 2026-10-25 23 11 32" src="https://github.com/user-attachments/assets/81110b2b-7d62-42f4-aa2b-13bd3a3f8954" />
+
+
+<img width="1130" height="857" alt="スクリーンショット 2026-10-25 23 14 47" src="https://github.com/user-attachments/assets/09b10a4e-c69b-4e30-b960-57c74d36adb5" />
 
 
 
 # 作成の動機
 
-法令を読解するために従来から三段表が利用されてきたが、三段表を自動作成するツールが存在しなかったため。
+法令を読解するために従来から使用されてきた三段表を自動作成するツールが存在しなかったため作ってみました。
 
 ## データと制約
 
 e-Gov法令API v2から表示時に取得します。
-Lawtextの解析機能を使って参照先を判定します。
 
-
-## 開発・移設
-
-Node.js 20.19以上で `npm ci`、`npm run dev` を実行します。`npm run build` で生成されるdistを静的ホスティングのルートに配置してください。APIへの接続にはインターネット接続とブラウザからのアクセス許可が必要です。
-
-ローカル作業用の `.openai/` 設定、依存関係の `node_modules/`、生成済みの `dist/` はリポジトリに含めません。
-
-## 検証
-
-`npm test` で参照解析・一覧・列幅切り替えのテストを実行できます。
+React / Viteの静的サイトです。
 
 ## ライセンス
 
 法令HTML表示：Lawtext 0.2.3 / MIT License / Copyright (c) 2017-2026 yamachi
 
 ライセンス全文は public/LAWText-LICENSE.txt にあります。移設・再配布時も残してください。
-
-参照リンクの点線下線は、参照先の列に合わせて法律は緑、施行令は青、施行規則は金、3列に表示していない他法令は紫で表示します。
