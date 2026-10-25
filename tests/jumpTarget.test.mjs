@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {jumpNodeCandidates,jumpElement} from '../src/jumpTarget.js';
+const sentence={tag:'Sentence',readerNode:'9',children:[]};
+const item={tag:'Subitem1',readerNode:'8',children:[sentence]};
+const paragraph={tag:'Paragraph',readerNode:'4',children:[item]};
+const article={tag:'Article',readerNode:'2',children:[paragraph]};
+const law={el:{tag:'Law',readerNode:'0',children:[article]}};
+test('本文や細分の参照は同じ条項号の最も近い表示ノードへ移動する',()=>{assert.deepEqual(jumpNodeCandidates(law,{node:'9'}),['8','4','2']);assert.deepEqual(jumpNodeCandidates(law,{node:'4'}),['4','2']);});
+test('表示されない本文を参照しても法令冒頭に飛ばず親の細分を使う',()=>{const itemElement={id:'correct-subitem'};const panel={querySelector:q=>q==='[data-node="8"]'?itemElement:q==='.law'?{id:'wrong-law-start'}:null};assert.equal(jumpElement(panel,law,{node:'9'}),itemElement);assert.equal(jumpElement(panel,law,{node:'missing'}),null);assert.equal(jumpElement(panel,law,{articleKey:'missing'}),null);});
+test('目次への明示移動のみ法令の冒頭を選ぶ',()=>{const start={};const panel={querySelector:q=>q==='.law'?start:null};assert.equal(jumpElement(panel,law,{articleKey:''}),start);});

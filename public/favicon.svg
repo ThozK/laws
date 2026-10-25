@@ -1,9 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <title>ローロー｜LawRow</title>
-  <g fill="none" stroke="#292929" stroke-width="5.5" stroke-linejoin="miter" stroke-linecap="square">
-    <path d="M7 10h20v17H7z" fill="none"/>
-    <path d="M36 19h16"/>
-    <path d="M13 37h20v17H13z" fill="none"/>
-    <path d="M42 46h16"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-.5 -.5 10 10">
+ <title>ローロー｜LawRow</title>
+ <g fill="#202020">
+  <path fill-rule="evenodd" d="M0 0h4v4H0zM1 1v2h2V1zM1 5h4v4H1zM2 6v2h2V6z"/>
+  <path d="M5 1.5h3v1H5zM6 6.5h3v1H6z"/>
+ </g>
 </svg>
