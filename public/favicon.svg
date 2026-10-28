@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-.5 -.5 10 10">
  <title>ローロー｜LawRow</title>
- <g fill="#202020">
+ <style>
+  .logo{fill:#202020}
+  @media(prefers-color-scheme:dark){.logo{fill:#fff}}
+ </style>
+ <g class="logo">
   <path fill-rule="evenodd" d="M0 0h4v4H0zM1 1v2h2V1zM1 5h4v4H1zM2 6v2h2V6z"/>
   <path d="M5 1.5h3v1H5zM6 6.5h3v1H6z"/>
  </g>
