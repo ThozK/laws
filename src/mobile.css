@@ -64,3 +64,29 @@
 }
 
 @media(max-width:700px){.brand-mark .brand-wordmark{display:none}}
+
+/* スマホ三段表は文字と余白を縮め、3列を画面幅に収める。 */
+@media(max-width:700px){
+ .header-actions .alignment-toggle{display:inline-flex;align-items:center;white-space:nowrap}
+ .mobile-aligned .mobile-tabs{display:none}
+ .mobile-aligned .aligned-columns{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;padding:0 4px;overflow-x:hidden;overflow-y:hidden;scroll-snap-type:none;scrollbar-width:thin;scroll-padding-inline:8px}
+ .mobile-aligned .aligned-columns .column{display:flex;flex:none;width:auto;min-width:0;scroll-snap-align:none}
+ .mobile-aligned .column-width-toggle{display:flex;min-height:21px;padding:2px 4px;pointer-events:none}
+ .mobile-aligned .column-arrow-icon{display:none}.mobile-aligned .colored-label{font-size:9px}
+ .mobile-aligned .column-header{height:54px;min-height:54px;padding:4px}.mobile-aligned .column-header h3{font-size:9px;min-height:13px;line-height:13px;margin-bottom:4px}
+ .mobile-aligned .reader{padding:7px 4px 20px;font-size:calc(var(--reader-font) * .55);line-height:1.85}.mobile-aligned .reader .article-group-title{padding:4px 3px}.mobile-aligned .jump-label select{padding-inline:0;min-width:0}
+}
+
+/* ピンチ拡大時の横移動を本文欄に閉じ込めず、ブラウザの拡大画面へ渡す。 */
+@media(max-width:700px){
+ .mobile-aligned .reader{
+  overflow-x:hidden;
+  overscroll-behavior-x:auto;
+  overscroll-behavior-y:contain;
+  touch-action:pan-x pan-y pinch-zoom;
+ }
+ .mobile-aligned .aligned-columns,.mobile-aligned .column{
+  overscroll-behavior-x:auto;
+  touch-action:pan-x pan-y pinch-zoom;
+ }
+}
