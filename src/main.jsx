@@ -155,7 +155,7 @@ function App(){
  useEffect(()=>{const mq=matchMedia('(max-width:700px)'),update=()=>setPhone(mq.matches);mq.addEventListener('change',update);return()=>mq.removeEventListener('change',update);},[]);
  useEffect(()=>{setVisited(v=>v[mobile]?v:v.map((seen,i)=>seen||i===mobile));},[mobile]);
  const [desktopAligned,setAligned]=useState(true);
- const [mobileAligned,setMobileAligned]=useState(saved.mobileAligned!==false);
+ const [mobileAligned,setMobileAligned]=useState(saved.mobileView==='table');
  const aligned=phone?mobileAligned:desktopAligned;
  const scrollLeader=useRef({index:-1,until:0});
  const alignment=useMemo(()=>aligned&&laws.every((law,i)=>!ids[i]||law)?buildDetailedAlignment(laws):{unitMode:true,articles:[[],[],[]],assignments:[new Map(),new Map(),new Map()]},[laws,aligned,ids]);
@@ -173,7 +173,7 @@ function App(){
  const backlinks=useMemo(()=>buildBacklinks(laws),[laws]);
  useEffect(()=>{if(!note)return;const escape=e=>{if(e.key==='Escape')closeNoteBranch(note);};const outside=e=>{if(!e.target.closest?.('.reference-note, .reference'))closeNote();};document.addEventListener('keydown',escape);document.addEventListener('pointerdown',outside);return()=>{document.removeEventListener('keydown',escape);document.removeEventListener('pointerdown',outside);};},[note]);
  useEffect(()=>{noteAnchor.current=null;noteSeq.current++;setNote(null);setReadingHistory([[],[],[]]);},[ids]);
- useEffect(()=>{try{localStorage.setItem(STORE,JSON.stringify({ids,font,weights,dark,mobileAligned}));}catch{setNotice('このブラウザでは設定を保存できません。');}},[ids,font,weights,dark,mobileAligned]);
+ useEffect(()=>{try{localStorage.setItem(STORE,JSON.stringify({ids,font,weights,dark,mobileView:mobileAligned?'table':'tabs'}));}catch{setNotice('このブラウザでは設定を保存できません。');}},[ids,font,weights,dark,mobileAligned]);
  useEffect(()=>{document.title=lawPageTitle(laws);if(started)history.replaceState(null,'',lawURL(location.href,ids));},[ids,laws,started]);
  useEffect(()=>{
  if(!started)return;
