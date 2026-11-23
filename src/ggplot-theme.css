@@ -194,3 +194,30 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 }
 
 .welcome-actions{align-items:flex-start}.welcome-random-group{position:relative;display:flex;justify-content:center}.welcome-actions .welcome-random{height:46px}
+
+/* Explicit surface colors keep nested parentheses distinct without tint stacking. */
+:root{--paren-1:#fff0ad;--paren-2:#ffdbb5;--paren-3:#ffd0d0;--paren-4:#f7d0e4;--paren-5:#eacff7;--paren-6:#ddd3fa}
+:root[data-theme="dark"]{--paren-1:#343125;--paren-2:#24382e;--paren-3:#322b40;--paren-4:#23353e;--paren-5:#3b2c26;--paren-6:#3a2936}
+.control-parentheses{--parentheses-tint:var(--paren-1)}
+.control-parentheses[data-parentheses_depth="2"]{--parentheses-tint:var(--paren-2)}
+.control-parentheses[data-parentheses_depth="3"]{--parentheses-tint:var(--paren-3)}
+.control-parentheses[data-parentheses_depth="4"]{--parentheses-tint:var(--paren-4)}
+.control-parentheses[data-parentheses_depth="5"]{--parentheses-tint:var(--paren-5)}
+.control-parentheses[data-parentheses_depth="6"]{--parentheses-tint:var(--paren-6)}
+:root .control-parentheses:hover,
+:root .paragraph-item-Paragraph:hover .control-parentheses,
+:root .paragraph-item-Paragraph:hover .control-parentheses[data-parentheses_depth]{background-color:var(--parentheses-tint);border-radius:3px}
+[data-theme="dark"] .control-parentheses:hover>.control-start-parenthesis,
+[data-theme="dark"] .control-parentheses:hover>.control-end-parenthesis{border-color:#c4ccd6}
+
+/* Editor-like bracket pair colors: readable text on subdued dark surfaces. */
+[data-theme="dark"] .control-parentheses{--paren-ink:#e5ce83;color:var(--paren-ink)}
+[data-theme="dark"] .control-parentheses[data-parentheses_depth="2"]{--paren-ink:#93d9ab}
+[data-theme="dark"] .control-parentheses[data-parentheses_depth="3"]{--paren-ink:#cbb1f3}
+[data-theme="dark"] .control-parentheses[data-parentheses_depth="4"]{--paren-ink:#91d2ed}
+[data-theme="dark"] .control-parentheses[data-parentheses_depth="5"]{--paren-ink:#edb28c}
+[data-theme="dark"] .control-parentheses[data-parentheses_depth="6"]{--paren-ink:#e8a6d3}
+[data-theme="dark"] .control-parentheses>.control-start-parenthesis,
+[data-theme="dark"] .control-parentheses>.control-end-parenthesis{color:var(--paren-ink);font-weight:800}
+[data-theme="dark"] .control-parentheses:hover>.control-start-parenthesis,
+[data-theme="dark"] .control-parentheses:hover>.control-end-parenthesis{border-color:transparent;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
