@@ -225,3 +225,20 @@ body,.app{background:var(--gg-panel)}button,input,select{color:var(--gg-ink);bor
 [data-theme="dark"] .paragraph-item-Paragraph:hover .control-parentheses>.control-end-parenthesis{color:var(--paren-ink);font-weight:800}
 [data-theme="dark"] .control-parentheses:hover>.control-start-parenthesis,
 [data-theme="dark"] .control-parentheses:hover>.control-end-parenthesis{border-color:transparent;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+
+/* Light mode uses dark, contrasting ink instead of a background marker. */
+:root:not([data-theme="dark"]) .control-parentheses{--paren-ink:#806000}
+:root:not([data-theme="dark"]) .control-parentheses[data-parentheses_depth="2"]{--paren-ink:#247044}
+:root:not([data-theme="dark"]) .control-parentheses[data-parentheses_depth="3"]{--paren-ink:#7345a0}
+:root:not([data-theme="dark"]) .control-parentheses[data-parentheses_depth="4"]{--paren-ink:#176987}
+:root:not([data-theme="dark"]) .control-parentheses[data-parentheses_depth="5"]{--paren-ink:#9b491d}
+:root:not([data-theme="dark"]) .control-parentheses[data-parentheses_depth="6"]{--paren-ink:#94366d}
+:root:not([data-theme="dark"]) .control-parentheses:hover,
+:root:not([data-theme="dark"]) .paragraph-item-Paragraph:hover .control-parentheses,
+:root:not([data-theme="dark"]) .paragraph-item-Paragraph:hover .control-parentheses[data-parentheses_depth]{background-color:transparent;color:var(--paren-ink)}
+:root:not([data-theme="dark"]) .control-parentheses:hover>.control-start-parenthesis,
+:root:not([data-theme="dark"]) .control-parentheses:hover>.control-end-parenthesis,
+:root:not([data-theme="dark"]) .paragraph-item-Paragraph:hover .control-parentheses>.control-start-parenthesis,
+:root:not([data-theme="dark"]) .paragraph-item-Paragraph:hover .control-parentheses>.control-end-parenthesis{color:var(--paren-ink);font-weight:800;border-color:transparent}
+:root:not([data-theme="dark"]) .control-parentheses:hover>.control-start-parenthesis,
+:root:not([data-theme="dark"]) .control-parentheses:hover>.control-end-parenthesis{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
