@@ -1,3 +1,4 @@
+import {repairSubitemReferences} from './subitemReferences.js';
 import {analyze} from 'lawtext/dist/src/analyzer/index.js';
 import {isSentenceLike} from 'lawtext/dist/src/node/container/sentenceEnv.js';
 
@@ -15,5 +16,5 @@ export async function analyzeLaw(el,analyzer=analyze){
   for(const child of node.children||[])if(typeof child!=='string')visit(child);
  }
  visit(el);
- try{return await analyzer({elToBeModified:el});}finally{for(const restore of restored)restore();}
+ try{return repairSubitemReferences(el,await analyzer({elToBeModified:el}));}finally{for(const restore of restored)restore();}
 }
