@@ -112,3 +112,8 @@ html,body,#root{height:100%;overflow:hidden}
 .related-dialog>.results{display:none}.related-dialog .related-laws{min-height:0;display:flex;flex-direction:column;flex:1}
 .related-dialog .related-laws>.catalog-help,.related-dialog .related-toolbar,.related-dialog .related-filter,.related-unverified{flex-shrink:0}
 .related-dialog .related-rows{flex:1;min-height:0;max-height:none}.related-unverified{font-size:11px;color:#68766d;margin:5px 0}
+
+.sample-warning{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 20px;font-size:12px;line-height:1.7;background:#f1f8f2;color:#48634d;border-bottom:1px solid #ddeade}.sample-warning a{font-weight:600}[data-theme="dark"] .sample-warning{background:#222f28;color:#c4dac8;border-color:#3c5142}@media(max-width:700px){.sample-warning{padding:5px 8px;font-size:10px;gap:2px 10px}}
+
+/* Keep chapter-heading margins from collapsing into alignment spacers. */
+.detail-aligned [data-group-first]{display:flow-root}

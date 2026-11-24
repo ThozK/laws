@@ -6,7 +6,10 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "test": "node --test tests/*.test.mjs",
-    "build:relations": "node scripts/build-related-laws.mjs"
+    "build:relations": "node scripts/build-related-laws.mjs",
+    "build:haikibutsu": "node scripts/build-haikibutsu-page.mjs",
+    "build:sample": "node scripts/build-sample-page.mjs",
+    "build:samples": "node scripts/build-all-samples.mjs"
   },
   "dependencies": {
     "lawtext": "0.2.3",

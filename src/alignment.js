@@ -1,3 +1,4 @@
+import {resolveLawReferences} from './resolveReferences.js';
 import {externalTargets,findTarget,subitemLevel} from './references.js';
 export function mainArticles(law){
  const main=law?.el.children.find(e=>e.tag==='LawBody')?.children.find(e=>e.tag==='MainProvision');
@@ -9,6 +10,7 @@ export function isFirstParagraphReference(env,article){
  return !!paragraph&&paragraph===first;
 }
 export function buildAlignment(laws){
+ laws.forEach(law=>{if(typeof law?.el?.text==='function')resolveLawReferences(law,laws);});
  const articles=laws.map(mainArticles),assignments=articles.map(()=>new Map());
  articles[0].forEach((el,row)=>assignments[0].set(el.readerKey,{row,status:'root'}));
  for(let level=1;level<3;level++){
@@ -74,12 +76,13 @@ export function monotoneAnchorIndices(values){
  const selected=new Set();let index=tailIndices.at(-1);while(index!==undefined&&index!==-1){selected.add(index);index=parents.get(index);}return selected;
 }
 export function buildDetailedAlignment(laws){
+ laws.forEach(law=>{if(typeof law?.el?.text==='function')resolveLawReferences(law,laws);});
  const units=laws.map(detailedUnits),maps=units.map(()=>new Map()),rows=[];
  const articleLists=laws.map(mainArticles),articleNumbers=articleLists.map(list=>new Map(list.map(article=>[article.attr.Num,article])));
  const addAfter=previous=>{const row={};rows.splice(previous?rows.indexOf(previous)+1:0,0,row);return row;};
  for(const unit of units[0]){const heading=unit.el.tag==='Paragraph'&&unit.el===unit.article.children.find(c=>c.tag==='Paragraph')?maps[0].get(unit.article.readerNode)?.row:null;const row=heading||{};if(!heading)rows.push(row);maps[0].set(unit.el.readerNode,{row,status:'root'});}
  for(let level=1;level<3;level++){
-  const refsByUnit=new Map();
+  const refsByUnit=new Map(),targetsByRow=new Map();
   function add(el,row){if(!el||!row)return;const refs=refsByUnit.get(el)||[];if(!refs.includes(row))refs.push(row);refsByUnit.set(el,refs);}
   for(const env of laws[level]?.analysis.pointerEnvByEL.values()||[]){
    const container=env.sentenceEnv.container,article=container.thisOrClosest(c=>c.el.tag==='Article')?.el;if(!article)continue;
@@ -89,11 +92,22 @@ export function buildDetailedAlignment(laws){
    const parentArticle=articleNumbers[parentLevel].get(target.article);if(!parentArticle)continue;
    const parent=findTarget(laws[parentLevel],target,parentArticle)?.el;if(!parent)continue;
    const row=maps[parentLevel].get(parent.readerNode)?.row;
+   if(row){const targets=targetsByRow.get(row)||[];targets.push(parent);targetsByRow.set(row,targets);}
    if(isFirstParagraphReference(env,article)&&!item)add(article,row);
    if(item)add(item,row);else add(paragraph,row);
   }
   const articles=articleLists[level],ranks=new Map(rows.map((row,i)=>[row,i]));
-  const proposals=articles.map(a=>refsByUnit.get(a)?.[0]||null),accepted=monotoneAnchorIndices(proposals.map(row=>row?ranks.get(row):null));
+  const proposals=articles.map(a=>refsByUnit.get(a)?.[0]||null);
+  function contains(parent,child){if(parent===child)return true;return (parent.children||[]).some(c=>typeof c!=='string'&&contains(c,child));}
+  // A later reference to the whole parent article is a continuation of an
+  // earlier detailed anchor, not evidence that the earlier anchor jumped ahead.
+  let previousAnchor=null;
+  for(let i=0;i<proposals.length;i++){
+   const row=proposals[i];if(!row)continue;
+   if(previousAnchor&&ranks.get(row)<ranks.get(previousAnchor)&&(targetsByRow.get(row)||[]).some(parent=>(targetsByRow.get(previousAnchor)||[]).some(child=>contains(parent,child))))proposals[i]=previousAnchor;
+   previousAnchor=proposals[i];
+  }
+  const accepted=monotoneAnchorIndices(proposals.map(row=>row?ranks.get(row):null));
   const bounds=new Map();let before=null;
   articles.forEach((article,index)=>{let after=null;for(let j=index+1;j<articles.length;j++)if(accepted.has(j)){after=proposals[j];break;}bounds.set(article,{before,after,accepted:accepted.has(index)});if(accepted.has(index))before=proposals[index];});
   let previous=null;
