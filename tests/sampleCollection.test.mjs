@@ -17,14 +17,14 @@ test('指定16法令の各サンプルに本文・上部の注意書き・最新
   for(let i=0;i<3;i++){assert.ok(units.some(u=>u.startsWith(`snapshot-${i}-`)),c.name);const data=JSON.parse(await readFile(new URL(`../public/samples/data/${c.ids[i]}.json`,import.meta.url),'utf8'));assert.equal(data.law_info.law_id,c.ids[i]);assert.ok(html.includes(data.revision_info.law_revision_id),c.name);}
  }
 });
-test('一覧は分野別に各サンプルへリンクし、上部に保存版の注意書きを表示する',async()=>{
- const html=await readFile(new URL('../samples/index.html',import.meta.url),'utf8');
- const body=html.slice(html.indexOf('<body>'));
- for(const c of Object.values(configs))assert.ok(body.includes(`>${c.name}</a>`),c.name);
- assert.match(body,/取得後の改正は自動反映されません/);
- assert.match(body,/<h2>環境・衛生<\/h2>/);
- assert.ok(body.indexOf('class="warning"')<body.indexOf('<section>'));
- assert.doesNotMatch(body,/>e-Govで/);
- assert.equal([...body.matchAll(/<a [^>]*aria-label="[^"\n]+の三段表サンプル"/g)].length,16);
- const app=await readFile(new URL('../src/main.jsx',import.meta.url),'utf8');assert.ok(app.indexOf('className="sample-warning"')<app.indexOf('className="welcome"'));assert.ok(app.indexOf('className="sample-warning"')<app.indexOf('<footer className="footer">'));
+test('サンプル一覧は独立ページを作らず選択ウィンドウから全16法令を開ける',async()=>{
+ const picker=await readFile(new URL('../src/SamplePicker.jsx',import.meta.url),'utf8');
+ for(const slug of Object.keys(configs))assert.ok(picker.includes("'"+slug+"'"),slug);
+ assert.match(picker,/aria-modal="true"/);
+ assert.match(picker,/改正は自動反映されません/);
+ const app=await readFile(new URL('../src/main.jsx',import.meta.url),'utf8');
+ assert.match(app,/<SamplePicker/);
+ assert.doesNotMatch(app,/BASE_URL}samples\/`/);
+ const sitemap=await readFile(new URL('../public/sitemap.xml',import.meta.url),'utf8');
+ assert.ok(!sitemap.includes('<loc>https://thozk.github.io/laws/samples/</loc>'));
 });

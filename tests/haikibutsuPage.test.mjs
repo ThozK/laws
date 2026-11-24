@@ -22,7 +22,7 @@ test('会社法サンプルには保存版の警告と最新版リンクがあ�
  assert.match(company,/この法律において/);assert.match(company,/会社法施行令/);assert.match(company,/会社法施行規則/);
  assert.match(company,/href="\.\.\/\.\.\/\?laws=417AC0000000086/);
  const app=await readFile(new URL('../src/main.jsx',import.meta.url),'utf8');
- assert.match(app,/samples\/`}>サンプルページ一覧/);assert.doesNotMatch(app,/haikibutsu\/`}>/);
+ assert.match(app,/setSamplesOpen\(true\)/);assert.doesNotMatch(app,/haikibutsu\/`}>/);
  for(const id of ['417AC0000000086','417CO0000000364','418M60000010012']){
   const data=JSON.parse(await readFile(new URL(`../public/samples/data/${id}.json`,import.meta.url)));assert.equal(data.law_info.law_id,id);
  }

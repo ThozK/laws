@@ -1,0 +1,8 @@
+import React,{useEffect,useRef} from 'react';
+import configs from '../scripts/sample-configs.json';
+const groups=[['環境・衛生',['haikibutsu','dojo','suishitsu','taiki','shokuhin','kansensho']],['土地・建築・防災',['toshikeikaku','nouchi','kenchiku','shobo']],['事業・取引・労務',['kaishaho','oroshiuri','kappu','tokusho','kojinjoho','anei']]];
+export default function SamplePicker({onClose}){
+ const dialog=useRef(null);
+ useEffect(()=>{const previous=document.activeElement;dialog.current?.querySelector('button')?.focus();return()=>previous?.focus();},[]);
+ return <div className="overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}><dialog ref={dialog} open className="dialog sample-picker" aria-modal="true" aria-labelledby="sample-picker-title" onKeyDown={e=>{if(e.key==='Escape')onClose();if(e.key==='Tab'){const items=[...e.currentTarget.querySelectorAll('button,a[href]')],first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}}}><div className="dialog-heading"><h2 id="sample-picker-title">サンプルページ一覧</h2><button aria-label="閉じる" onClick={onClose}>×</button></div><aside className="sample-picker-warning"><strong>保存版サンプルです。最新の法令ではない場合があります。</strong><p>改正は自動反映されません。実務で利用する際は、各ページの「最新の法令をLawRowで開く」から現行条文を確認してください。条項号の対応関係は機械的に推定しています。</p></aside><div className="sample-picker-list">{groups.map(([title,slugs])=><section key={title}><h3>{title}</h3><ul>{slugs.map(slug=><li key={slug}><a href={`${import.meta.env.BASE_URL}${configs[slug].path}/`}>{configs[slug].name}<span aria-hidden="true">→</span></a></li>)}</ul></section>)}</div></dialog></div>;
+}
